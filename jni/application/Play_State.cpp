@@ -49,7 +49,21 @@ Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
 
     void Play_State::render() {
         Video &vr = get_Video();
+        
+        Camera cam = m_player.get_camera();
+        cam.position = Point3f(0,0,0);
+        vr.set_3d(cam);
+        vr.set_zwrite(false);
+
+        Quadrilateral<Vertex3f_Color> quad = Quadrilateral<Vertex3f_Color>(
+                                                Vertex3f_Color(Point3f(0,0,0), 6619135),
+                                               Vertex3f_Color(Point3f(100,0,0), 6619135),
+                                               Vertex3f_Color(Point3f(100,100,0), 6619135),
+                                               Vertex3f_Color(Point3f(0,100,0), 6619135));
+        quad.is_3d();
         vr.set_3d(m_player.get_camera());
+        vr.set_zwrite(true);
+        vr.render(quad);
         m_crate.render();
     }
 
@@ -61,12 +75,14 @@ Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
         /** Get forward and left vectors in the XY-plane **/
         const Vector3f forward = m_player.get_camera().get_forward().get_ij().normalized();
         const Vector3f left = m_player.get_camera().get_left().get_ij().normalized();
+        const Vector3f up = m_player.get_camera().get_forward().get_jk().normalize();
         
         /** Get velocity vector split into a number of axes **/
-        const Vector3f velocity = (-y) * 50.0f * forward + (-x) * 50.0f * left;
+        const Vector3f velocity = (-y) * 50.0f * forward + (-x) * 50.0f * left + (-y) * 50.0f * up;
         const Vector3f x_vel = velocity.get_i();
         const Vector3f y_vel = velocity.get_j();
-        Vector3f z_vel = m_player.get_velocity().get_k();
+        //Vector3f z_vel = m_player.get_velocity().get_k();
+        Vector3f z_vel = velocity.get_k();
         
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
@@ -151,13 +167,14 @@ Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
                 break;
                 
             case 6: //Trigger Left
-                vibration.x = confidence;
-                get_Controllers().set_vibration(1, vibration.x, vibration.y);
                 break;
                 
             case 7: //Trigger Right
-                vibration.y = confidence;
-                get_Controllers().set_vibration(1, vibration.x, vibration.y);
+                if (abs(confidence) > 0.15f) {
+                    y = -(confidence * get_Window().get_height() / 2) / 100;
+                } else {
+                    y = 0;
+                }
                 break;
                 
             case 8: //Left shoulder
