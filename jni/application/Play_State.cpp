@@ -10,8 +10,8 @@
 using namespace std;
 using namespace Zeni;
 
-Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
-                           Vector3f(30.0f, 30.0f, 30.0f)),
+Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
+                           Vector3f(3000.0f, 3000.0f, 3000.0f)),
             m_player(Camera(Point3f(0.0f, 0.0f, 50.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
@@ -109,7 +109,7 @@ Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
             /** keep player above the ground **/
             const Point3f &position = m_player.get_camera().position;
             if(position.z < 50.0f) {
-                m_player.set_position(Point3f(position.x, position.y, 50.0f));
+                //m_player.set_position(Point3f(position.x, position.y, 50.0f));
             }
         }
         
