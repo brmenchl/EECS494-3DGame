@@ -2,13 +2,11 @@
 #define CRATE_H
 
 #include <zenilib.h>
-#include <Zeni/Collision.h>
-#include <Zeni/Quaternion.h>
-#include <Zeni/Sound.h>
-#include <Zeni/Vector3f.h>
+#include "Game_Object.h"
+
 using namespace Zeni;
 
-class Crate {
+class Crate : public Game_Object {
   public:
     Crate(const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
           const Zeni::Vector3f &scale_ = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
@@ -18,19 +16,19 @@ class Crate {
     ~Crate();
 
     void render();
-      
-      void step(const float &time_step);
-      void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
+    void step(const float &time_step);
+    void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
+    Point3f get_corner() {return m_corner;}
 
     void collide();
 
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
 
   private:
-      //Member variables
-      Vector3f m_velocity;
+    //Member variables
+    //Vector3f m_velocity;
       
-    void create_body();
+    //void create_body();
 
     // Level 1
     static Zeni::Model * m_model;
@@ -39,12 +37,12 @@ class Crate {
     Zeni::Sound_Source * m_source;
 
     // Level 2
-    Zeni::Point3f m_corner;
-    Zeni::Vector3f m_scale;
-    Zeni::Quaternion m_rotation;
+//    Zeni::Point3f m_corner;
+//    Zeni::Vector3f m_scale;
+//    Zeni::Quaternion m_rotation;
 
     // Level 3
-    Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
+    //Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
 
     // Level 4
     // A stationary Crate has no controls

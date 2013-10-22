@@ -1,18 +1,17 @@
 #include <zenilib.h>
-
+#include <iostream>
 #include "Crate.h"
+#include "Game_Object.h"
 
 using namespace Zeni;
 using namespace Zeni::Collision;
+using namespace std;
 
   Crate::Crate(const Point3f &corner_,
         const Vector3f &scale_,
         const Quaternion &rotation_)
-    : m_source(new Sound_Source(get_Sounds()["collide"])),
-    m_corner(corner_),
-    m_scale(scale_),
-    m_rotation(rotation_),
-m_velocity(Vector3f(0,0,0))
+: Game_Object(corner_, scale_, rotation_),
+    m_source(new Sound_Source(get_Sounds()["collide"]))
   {
     if(!m_instance_count)
       m_model = new Model("models/crate.3ds");
@@ -21,11 +20,9 @@ m_velocity(Vector3f(0,0,0))
     create_body();
   }
 
-  Crate::Crate(const Crate &rhs)
-    : m_source(new Sound_Source(get_Sounds()["collide"])),
-    m_corner(rhs.m_corner),
-    m_scale(rhs.m_scale),
-    m_rotation(rhs.m_rotation)
+Crate::Crate(const Crate &rhs)
+: Game_Object(rhs),
+    m_source(new Sound_Source(get_Sounds()["collide"]))
   {
     ++m_instance_count;
 
@@ -63,21 +60,13 @@ m_velocity(Vector3f(0,0,0))
 
 void Crate::step(const float &time_step) {
     m_corner += time_step * m_velocity;
+    cout << get_corner().x << ", " << get_corner().y << ", " << get_corner().z << endl;
     create_body();
 }
 
   void Crate::collide() {
     if(!m_source->is_playing())
       m_source->play();
-  }
-
-  void Crate::create_body() {
-    m_body = Parallelepiped(m_corner,
-                            m_rotation * m_scale.get_i(),
-                            m_rotation * m_scale.get_j(),
-                            m_rotation * m_scale.get_k());
-
-    m_source->set_position(m_corner + m_rotation * m_scale / 2.0f);
   }
 
   Model * Crate::m_model = 0;

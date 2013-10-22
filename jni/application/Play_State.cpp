@@ -12,7 +12,7 @@ using namespace Zeni;
 
 Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                                    Vector3f(3000.0f, 3000.0f, 3000.0f)),
-                            m_player_crate(Point3f(150.0f, 0.0f, 0.0f),
+                            m_player_crate(Point3f(150.0f, 0.0f, 50.0f),
                                     Vector3f(30.0f, 30.0f, 30.0f)),
             m_camera(Camera(Point3f(0.0f, 0.0f, 50.0f),
                     Quaternion(),
@@ -30,6 +30,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTX /* x-rotation */), 4);
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
+        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
@@ -70,7 +71,6 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         const Vector3f velocity = (-y) * 50.0f * forward + (-x) * 50.0f * left + (-y) * 50.0f * up;
         const Vector3f x_vel = velocity.get_i();
         const Vector3f y_vel = velocity.get_j();
-        //Vector3f z_vel = m_camera.get_velocity().get_k();
         Vector3f z_vel = velocity.get_k();
         
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
@@ -91,14 +91,15 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             partial_step(time_step, z_vel);
             
             /** Look around **/
-            m_camera.adjust_pitch(h / look_sensitivity);
-            m_camera.turn_left_xy(-w / look_sensitivity);
-            m_camera.adjust_roll(roll / 100);
+//            m_camera.adjust_pitch(h / look_sensitivity);
+//            m_camera.turn_left_xy(-w / look_sensitivity);
+//            m_camera.adjust_roll(roll / 100);
+            m_player_crate.rotate(Quaternion(-w / look_sensitivity, h / look_sensitivity, roll / 100));
             
             /** keep player above the ground **/
             const Point3f &position = m_camera.get_camera().position;
             if(position.z < 50.0f) {
-                //m_camera.set_position(Point3f(position.x, position.y, 50.0f));
+                m_camera.set_position(Point3f(position.x, position.y, 50.0f));
             }
         }
     }
@@ -107,7 +108,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         m_camera.set_velocity(velocity);
         m_player_crate.set_velocity(velocity);
         const Point3f backup_position = m_camera.get_camera().position;
-        //m_camera.step(time_step);
+        m_camera.step(time_step);
         m_player_crate.step(time_step);
         
     }
@@ -130,7 +131,6 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 } else {
                     x = 0;
                 }
-                cout << confidence << endl;
                 break;
                 
             case 3: //Left Toggle Y
@@ -157,7 +157,12 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 }
                 break;
                 
-            case 6: //Trigger Left
+            case 6: //D up
+                m_camera.attach_camera(&m_player_crate);
+                break;
+                
+            case 10://D down
+                m_camera.detach_camera();
                 break;
                 
             case 7: //Trigger Right

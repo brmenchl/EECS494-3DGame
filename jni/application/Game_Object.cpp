@@ -48,7 +48,6 @@ Game_Object & Game_Object::operator=(const Game_Object &rhs) {
 }
 
 Game_Object::~Game_Object() {
-    delete m_source;
     
     if(!--m_instance_count) {
 //        delete m_model;
@@ -67,8 +66,6 @@ void Game_Object::create_body() {
                             m_rotation * m_scale.get_i(),
                             m_rotation * m_scale.get_j(),
                             m_rotation * m_scale.get_k());
-    
-    m_source->set_position(m_corner + m_rotation * m_scale / 2.0f);
 }
 
 unsigned long Game_Object::m_instance_count = 0lu;

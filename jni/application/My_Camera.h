@@ -24,7 +24,7 @@ public:
     
     const Zeni::Camera & get_camera() const {return m_camera;}
     
-    void attach_camera(Crate* crate);
+    void attach_camera(Game_Object* obj);
     void detach_camera();
     bool get_is_attached();
     
@@ -42,13 +42,15 @@ public:
     void step(const float &time_step);
     
 private:
-    void create_body();
-    Crate* m_attached_crate;
+    Game_Object* m_attached_object;
     Zeni::Camera m_camera;
     Zeni::Vector3f m_end_point_b;
     float m_radius;
     Zeni::Collision::Capsule m_body; // collision
     Zeni::Vector3f m_velocity;
+    
+    void create_body();
+    void chase_attached();
 };
 
 #endif /* defined(__game__Camera__) */

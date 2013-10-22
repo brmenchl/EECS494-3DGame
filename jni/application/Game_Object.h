@@ -30,9 +30,10 @@ public:
     Point3f get_corner() {return m_corner;}
     Vector3f get_scale() {return m_scale;}
     Quaternion get_rotation() {return m_rotation;}
+    void rotate(const Quaternion &rot_) { m_rotation *= rot_; }
     const Collision::Parallelepiped & get_body() const {return m_body;}
     
-private:
+protected:
     //Member variables
     Vector3f m_velocity;
     Point3f m_corner;
@@ -42,7 +43,6 @@ private:
     
     //static Zeni::Model * m_model;
     static unsigned long m_instance_count;
-    Sound_Source * m_source;
     
     void create_body();
     
