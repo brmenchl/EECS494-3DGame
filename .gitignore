@@ -9,6 +9,8 @@
 /bin/
 /build/
 /lib/
+/dev/
+/docs/
 
 /game_d.app/
 /game.app/
@@ -20,6 +22,7 @@
 /lsbappchk_full.txt
 
 *~
+*.bat
 *.bak
 *.dblite
 *.dll
