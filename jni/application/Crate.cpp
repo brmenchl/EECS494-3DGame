@@ -11,7 +11,8 @@ using namespace Zeni::Collision;
     : m_source(new Sound_Source(get_Sounds()["collide"])),
     m_corner(corner_),
     m_scale(scale_),
-    m_rotation(rotation_)
+    m_rotation(rotation_),
+m_velocity(Vector3f(0,0,0))
   {
     if(!m_instance_count)
       m_model = new Model("models/crate.3ds");
@@ -59,6 +60,11 @@ using namespace Zeni::Collision;
 
     m_model->render();
   }
+
+void Crate::step(const float &time_step) {
+    m_corner += time_step * m_velocity;
+    create_body();
+}
 
   void Crate::collide() {
     if(!m_source->is_playing())

@@ -13,6 +13,7 @@
 #include <zenilib.h>
 #include "Player.h"
 #include "Crate.h"
+#include "My_Camera.h"
 
 using namespace std;
 using namespace Zeni;
@@ -31,15 +32,15 @@ public:
     void render();
     void perform_logic();
     void on_event(const Zeni::Zeni_Input_ID &id, const float &confidence, const int &action);
-    void on_mouse_motion(const SDL_MouseMotionEvent &event);
     
 private:
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
     float look_sensitivity;
     Zeni::Time_HQ time_passed;
-    Player m_player;
+    My_Camera m_camera;
     Crate m_crate;
+    Crate m_player_crate;
     
     void partial_step(const float &time_step, const Vector3f &velocity);
 
