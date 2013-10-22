@@ -10,19 +10,6 @@
 /build/
 /lib/
 
-/jni/Android.mk
-/jni/Application.mk
-/jni/external/
-/jni/launcher/
-/jni/app/
-/docs/
-/dev/
-/Doxyfile
-/README.md
-/multi-build_sh.bat
-/multi-clean_sh.bat
-/multi-premake_sh.bat
-/premake4.lua
 /game_d.app/
 /game.app/
 /game_d32
