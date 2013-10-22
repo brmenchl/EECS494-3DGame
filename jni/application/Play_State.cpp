@@ -18,7 +18,7 @@ Play_State::Play_State() : m_crate(Point3f(150.0f, 0.0f, 0.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
              11.0f) {
                 
-        look_sensitivity = 40000.0f;
+        look_sensitivity = 30000.0f;
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
