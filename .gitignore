@@ -11,6 +11,8 @@
 /lib/
 /dev/
 /docs/
+/jni/external/
+/jni/launcher/
 
 /game_d.app/
 /game.app/
@@ -43,6 +45,7 @@
 *.so
 *.suo
 
+!/jni/application/
 !/jni/external/bin/*/*.dll
 !/jni/external/lib/*/*.lib
 !/jni/external/libvorbis/macos/*.exp
