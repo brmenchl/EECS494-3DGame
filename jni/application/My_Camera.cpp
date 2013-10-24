@@ -84,8 +84,9 @@ void My_Camera::create_body() {
 }
 
 void My_Camera::chase_attached() {
-    Vector3f pull_back = (m_attached_object->get_rotation() * Vector3f(100,0,25)) * -1;
+    Vector3f pull_back = (m_attached_object->get_rotation() * Vector3f(100,0,-25)) * -1;
     m_camera.position = m_attached_object->get_corner() + pull_back;
     m_camera.orientation = m_attached_object->get_rotation();
+    
     
 }

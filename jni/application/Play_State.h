@@ -37,6 +37,8 @@ private:
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
     float look_sensitivity;
+    float roll_sensitivity;
+    float thrust_sensitivity;
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;

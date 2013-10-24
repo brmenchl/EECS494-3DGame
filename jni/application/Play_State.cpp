@@ -20,7 +20,9 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
              11.0f) {
     
-        look_sensitivity = 30000.0f;
+        look_sensitivity = 15000.0f;
+        roll_sensitivity = 6500.0f;
+        thrust_sensitivity = 30.0f;
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -66,20 +68,14 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Quaternion rotation = m_player_crate.get_rotation();
         
         const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
-        const Vector3f left = rotation * Vector3f(0,1,0).normalized();
-        const Vector3f up = rotation * Vector3f(0,0,1).normalized();
-        
-        
-        /** Get forward and left vectors in the XY-plane **/
-//        const Vector3f forward = m_camera.get_camera().get_forward().get_ij().normalized();
-//        const Vector3f left = m_camera.get_camera().get_left().get_ij().normalized();
-//        const Vector3f up = m_camera.get_camera().get_forward().get_jk().normalize();
+//        const Vector3f left = rotation * Vector3f(0,1,0).get_ij().normalized();
+//        const Vector3f up = rotation * Vector3f(0,0,1).get_jk().normalized();
         
         /** Get velocity vector split into a number of axes **/
-        const Vector3f velocity = (-y) * 50.0f * forward + (-x) * 50.0f * left + (-y) * 50.0f * up;
-        const Vector3f x_vel = velocity.get_i();
-        const Vector3f y_vel = velocity.get_j();
-        Vector3f z_vel = velocity.get_k();
+        const Vector3f velocity = (-y) * 50.0f * forward.get_ij() + (-y) * 50.0f * forward.get_k();
+        const Vector3f y_vel = velocity.get_i();
+        const Vector3f x_vel = velocity.get_j();
+        const Vector3f z_vel = velocity.get_k();
         
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
@@ -102,7 +98,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
 //            m_camera.adjust_pitch(h / look_sensitivity);
 //            m_camera.turn_left_xy(-w / look_sensitivity);
 //            m_camera.adjust_roll(roll / 100);
-            m_player_crate.rotate(Quaternion(-w / look_sensitivity, h / look_sensitivity, roll / 100));
+            m_player_crate.rotate(Quaternion(-w / look_sensitivity, h / look_sensitivity, roll / roll_sensitivity));
             
             /** keep player above the ground **/
             const Point3f &position = m_camera.get_camera().position;
@@ -134,32 +130,23 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 break;
                 
             case 2: //Left Toggle X
-                if (abs(confidence) > 0.15f) {
-                    x = (confidence * get_Window().get_width() / 2) / 100;
-                } else {
-                    x = 0;
-                }
                 break;
                 
             case 3: //Left Toggle Y
-                if (abs(confidence) > 0.15f) {
-                    y = (confidence * get_Window().get_height() / 2) / 100;
-                } else {
-                    y = 0;
-                }
                 break;
                 
-            case 4: //Right Toggle X
+            case 4: //Right Toggle X - Steering
+                
                 if (abs(confidence) > 0.25f) {
-                    w = confidence * (get_Window().get_width());
+                    roll = (confidence * get_Window().get_width() / 2);
                 } else {
-                    w = 0.0f;
+                    roll = 0;
                 }
                 break;
                 
             case 5: //Right toggle Y
                 if (abs(confidence) > 0.25f) {
-                    h = confidence * (get_Window().get_height());
+                    h = -confidence * (get_Window().get_height());
                 } else {
                     h = 0.0f;
                 }
@@ -173,20 +160,18 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 m_camera.detach_camera();
                 break;
                 
-            case 7: //Trigger Right
+            case 7: //Trigger Right - Thrust
                 if (abs(confidence) > 0.15f) {
-                    y = -(confidence * get_Window().get_height() / 2) / 100;
+                    y = -(confidence * get_Window().get_height() / 2) / thrust_sensitivity;
                 } else {
                     y = 0;
                 }
                 break;
                 
             case 8: //Left shoulder
-                roll = -confidence;
                 break;
                 
             case 9: //Right shoulder
-                roll = confidence;
                 break;
         
             default:
