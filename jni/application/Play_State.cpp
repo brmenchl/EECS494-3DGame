@@ -62,10 +62,18 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
         
+        /** Get current rotation from the player **/
+        Quaternion rotation = m_player_crate.get_rotation();
+        
+        const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
+        const Vector3f left = rotation * Vector3f(0,1,0).normalized();
+        const Vector3f up = rotation * Vector3f(0,0,1).normalized();
+        
+        
         /** Get forward and left vectors in the XY-plane **/
-        const Vector3f forward = m_camera.get_camera().get_forward().get_ij().normalized();
-        const Vector3f left = m_camera.get_camera().get_left().get_ij().normalized();
-        const Vector3f up = m_camera.get_camera().get_forward().get_jk().normalize();
+//        const Vector3f forward = m_camera.get_camera().get_forward().get_ij().normalized();
+//        const Vector3f left = m_camera.get_camera().get_left().get_ij().normalized();
+//        const Vector3f up = m_camera.get_camera().get_forward().get_jk().normalize();
         
         /** Get velocity vector split into a number of axes **/
         const Vector3f velocity = (-y) * 50.0f * forward + (-x) * 50.0f * left + (-y) * 50.0f * up;
@@ -105,9 +113,9 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     }
 
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
-        m_camera.set_velocity(velocity);
+        //m_camera.set_velocity(velocity);
         m_player_crate.set_velocity(velocity);
-        const Point3f backup_position = m_camera.get_camera().position;
+        //const Point3f backup_position = m_camera.get_camera().position;
         m_camera.step(time_step);
         m_player_crate.step(time_step);
         
