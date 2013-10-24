@@ -39,6 +39,11 @@ private:
     float look_sensitivity;
     float roll_sensitivity;
     float thrust_sensitivity;
+    const float base_thrust;
+    const float thrust_delta;
+    const float thrust_range;
+    float thrust_amount;
+    
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;

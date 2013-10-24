@@ -60,7 +60,6 @@ Crate::Crate(const Crate &rhs)
 
 void Crate::step(const float &time_step) {
     m_corner += time_step * m_velocity;
-    cout << get_corner().x << ", " << get_corner().y << ", " << get_corner().z << endl;
     create_body();
 }
 

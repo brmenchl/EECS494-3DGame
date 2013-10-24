@@ -18,11 +18,17 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
-             11.0f) {
+             11.0f),
+        base_thrust(15.0f),
+        thrust_delta(0.5f),
+        thrust_range(10.0f)
+    {
     
         look_sensitivity = 15000.0f;
         roll_sensitivity = 6500.0f;
         thrust_sensitivity = 30.0f;
+                
+                
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -34,6 +40,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
+        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
 
@@ -68,11 +75,26 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Quaternion rotation = m_player_crate.get_rotation();
         
         const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
-//        const Vector3f left = rotation * Vector3f(0,1,0).get_ij().normalized();
-//        const Vector3f up = rotation * Vector3f(0,0,1).get_jk().normalized();
+        
+        /** Calculate current thrust**/
+        float desired_thrust = base_thrust + thrust_range * y;
+        
+        if (thrust_amount > desired_thrust) {
+            thrust_amount -= thrust_delta;
+        }
+        
+        if (thrust_amount < desired_thrust) {
+            thrust_amount += thrust_delta;
+        }
+        
+        if (thrust_amount == desired_thrust) {
+            thrust_amount = desired_thrust;
+        }
+        
+        cout << "Thrust: " << thrust_amount << endl;
         
         /** Get velocity vector split into a number of axes **/
-        const Vector3f velocity = (-y) * 50.0f * forward.get_ij() + (-y) * 50.0f * forward.get_k();
+        const Vector3f velocity = (thrust_amount) * 50.0f * forward.get_ij() + (thrust_amount) * 50.0f * forward.get_k();
         const Vector3f y_vel = velocity.get_i();
         const Vector3f x_vel = velocity.get_j();
         const Vector3f z_vel = velocity.get_k();
@@ -94,11 +116,8 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             partial_step(time_step, y_vel);
             partial_step(time_step, z_vel);
             
-            /** Look around **/
-//            m_camera.adjust_pitch(h / look_sensitivity);
-//            m_camera.turn_left_xy(-w / look_sensitivity);
-//            m_camera.adjust_roll(roll / 100);
-            m_player_crate.rotate(Quaternion(-w / look_sensitivity, h / look_sensitivity, roll / roll_sensitivity));
+            /** Rotate the aircraft **/
+            m_player_crate.rotate(Quaternion(-w / (look_sensitivity * 10), h / look_sensitivity, roll / roll_sensitivity));
             
             /** keep player above the ground **/
             const Point3f &position = m_camera.get_camera().position;
@@ -130,6 +149,11 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 break;
                 
             case 2: //Left Toggle X
+                if (abs(confidence) > 0.25f) {
+                    w = confidence * (get_Window().get_height());
+                } else {
+                    w = 0.0f;
+                }
                 break;
                 
             case 3: //Left Toggle Y
@@ -162,7 +186,15 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 
             case 7: //Trigger Right - Thrust
                 if (abs(confidence) > 0.15f) {
-                    y = -(confidence * get_Window().get_height() / 2) / thrust_sensitivity;
+                    y = confidence;
+                } else {
+                    y = 0;
+                }
+                break;
+                
+            case 11: //Trigger Left - Thrust
+                if (abs(confidence) > 0.15f) {
+                    y = -confidence;
                 } else {
                     y = 0;
                 }
