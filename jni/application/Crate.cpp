@@ -30,7 +30,7 @@ Crate::Crate(const Crate &rhs)
   }
 
   Crate & Crate::operator=(const Crate &rhs) {
-    m_corner = rhs.m_corner;
+    m_position = rhs.m_position;
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
 
@@ -51,7 +51,7 @@ Crate::Crate(const Crate &rhs)
   void Crate::render() {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
 
-    m_model->set_translate(m_corner);
+    m_model->set_translate(m_position);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
 
@@ -59,7 +59,7 @@ Crate::Crate(const Crate &rhs)
   }
 
 void Crate::step(const float &time_step) {
-    m_corner += time_step * m_velocity;
+    m_position += time_step * m_velocity;
     create_body();
 }
 

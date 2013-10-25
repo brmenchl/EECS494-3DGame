@@ -8,73 +8,73 @@
 
 #include "Player.h"
 #include <zenilib.h>
+#include "Game_Object.h"
+
 
 using namespace Zeni;
 using namespace Zeni::Collision;
+using namespace std;
 
-Player::Player(const Camera &camera_,
-               const Vector3f &end_point_b_,
-               const float radius_)
-: m_camera(camera_),
-m_end_point_b(end_point_b_),
-m_radius(radius_),
-m_is_on_ground(false)
+Player::Player(const Point3f &corner_,
+             const Vector3f &scale_,
+             const Quaternion &rotation_)
+: Game_Object(corner_, scale_, rotation_),
+m_source(new Sound_Source(get_Sounds()["collide"]))
 {
-    m_camera.fov_rad = Zeni::Global::pi / 3.0f;
+    if(!m_instance_count)
+        m_model = new Model("models/crate.3ds");
+    ++m_instance_count;
     
     create_body();
 }
 
-// Level 2
-void Player::set_position(const Point3f &position) {
-    m_camera.position = position;
+Player::Player(const Player &rhs)
+: Game_Object(rhs),
+m_source(new Sound_Source(get_Sounds()["collide"]))
+{
+    ++m_instance_count;
+    
     create_body();
 }
 
-void Player::adjust_pitch(const float &phi) {
-    const Quaternion backup = m_camera.orientation;
-    const Vector3f backup_up = m_camera.get_up();
+Player & Player::operator=(const Player &rhs) {
+    m_position = rhs.m_position;
+    m_scale = rhs.m_scale;
+    m_rotation = rhs.m_rotation;
     
-    m_camera.adjust_pitch(phi);
+    create_body();
     
-    if(m_camera.get_up().k < 0.0f && backup_up.k >= 0.0f)
-        m_camera.orientation = backup;
+    return *this;
 }
 
-void Player::adjust_roll(const float &rho) {
-    m_camera.adjust_roll(rho);
-}
-
-void Player::turn_left_xy(const float &theta) {
-    m_camera.turn_left_xy(theta);
-}
-
-void Player::set_on_ground(const bool &is_on_ground_) {
-    m_is_on_ground = is_on_ground_;
-    if(m_is_on_ground)
-        m_velocity.k = 0.0f;
-}
-
-void Player::jump() {
-    if(m_is_on_ground) {
-        m_velocity.k += 60.0f;
-        m_is_on_ground = false;
+Player::~Player() {
+    delete m_source;
+    
+    if(!--m_instance_count) {
+        delete m_model;
+        m_model = 0lu;
     }
 }
 
+void Player::render() {
+    const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
+    
+    m_model->set_translate(m_position);
+    m_model->set_scale(m_scale);
+    m_model->set_rotate(rotation.second, rotation.first);
+    
+    m_model->render();
+}
+
 void Player::step(const float &time_step) {
-    m_camera.position += time_step * m_velocity;
+    m_position += time_step * m_velocity;
     create_body();
 }
 
-void Player::create_body() {
-    Sound &sr = get_Sound();
-    
-    m_body = Capsule(m_camera.position,
-                     m_camera.position + m_end_point_b,
-                     m_radius);
-    
-    sr.set_listener_position(m_camera.position);
-    sr.set_listener_forward_and_up(m_camera.get_forward(), m_camera.get_up());
-    sr.set_listener_velocity(m_velocity);
+void Player::collide() {
+    if(!m_source->is_playing())
+        m_source->play();
 }
+
+Model * Player::m_model = 0;
+unsigned long Player::m_instance_count = 0lu;

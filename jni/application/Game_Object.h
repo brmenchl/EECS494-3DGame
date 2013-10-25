@@ -27,7 +27,7 @@ public:
     virtual void collide() = 0;
     void step(const float &time_step);
     void set_velocity(const Vector3f &velocity_) {m_velocity = velocity_;}
-    Point3f get_corner() {return m_corner;}
+    Point3f get_corner() {return m_position;}
     Vector3f get_scale() {return m_scale;}
     Quaternion get_rotation() {return m_rotation;}
     void rotate(const Quaternion &rot_) { m_rotation *= rot_; }
@@ -36,7 +36,7 @@ public:
 protected:
     //Member variables
     Vector3f m_velocity;
-    Point3f m_corner;
+    Point3f m_position;
     Vector3f m_scale;
     Quaternion m_rotation;
     Collision::Parallelepiped m_body;

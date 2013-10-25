@@ -48,7 +48,7 @@ private:
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;
-    Crate m_player_crate;
+    Player m_player_crate;
     
     void partial_step(const float &time_step, const Vector3f &velocity);
 

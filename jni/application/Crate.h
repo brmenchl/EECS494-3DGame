@@ -18,7 +18,7 @@ class Crate : public Game_Object {
     void render();
     void step(const float &time_step);
     void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
-    Point3f get_corner() {return m_corner;}
+    Point3f get_position() {return m_position;}
 
     void collide();
 

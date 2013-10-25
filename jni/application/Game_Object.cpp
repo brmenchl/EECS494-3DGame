@@ -12,10 +12,10 @@
 using namespace Zeni;
 using namespace Zeni::Collision;
 
-Game_Object::Game_Object(const Point3f &corner_,
+Game_Object::Game_Object(const Point3f &position_,
              const Vector3f &scale_,
              const Quaternion &rotation_)
-: m_corner(corner_),
+: m_position(position_),
 m_scale(scale_),
 m_rotation(rotation_),
 m_velocity(Vector3f(0,0,0))
@@ -28,7 +28,7 @@ m_velocity(Vector3f(0,0,0))
 }
 
 Game_Object::Game_Object(const Game_Object &rhs)
-: m_corner(rhs.m_corner),
+: m_position(rhs.m_position),
 m_scale(rhs.m_scale),
 m_rotation(rhs.m_rotation)
 {
@@ -38,7 +38,7 @@ m_rotation(rhs.m_rotation)
 }
 
 Game_Object & Game_Object::operator=(const Game_Object &rhs) {
-    m_corner = rhs.m_corner;
+    m_position = rhs.m_position;
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
     
@@ -56,13 +56,13 @@ Game_Object::~Game_Object() {
 }
 
 void Game_Object::step(const float &time_step) {
-    m_corner += time_step * m_velocity;
+    m_position += time_step * m_velocity;
     create_body();
 }
 
 
 void Game_Object::create_body() {
-    m_body = Parallelepiped(m_corner,
+    m_body = Parallelepiped(m_position,
                             m_rotation * m_scale.get_i(),
                             m_rotation * m_scale.get_j(),
                             m_rotation * m_scale.get_k());

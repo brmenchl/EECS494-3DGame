@@ -130,7 +130,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             partial_step(time_step, z_vel);
             
             /** Rotate the aircraft **/
-            m_player_crate.rotate(Quaternion(-w / (look_sensitivity * 10), h / look_sensitivity, roll / roll_sensitivity));
+            m_player_crate.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
             
             /** keep player above the ground **/
             const Point3f &position = m_camera.get_camera().position;

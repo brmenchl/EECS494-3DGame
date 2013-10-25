@@ -10,56 +10,51 @@
 #define __game__Player__
 
 #include <iostream>
-#include <Zeni/Camera.h>
-#include <Zeni/Collision.h>
-#include <Zeni/Quaternion.h>
-#include <Zeni/Vector3f.h>
+#include <zenilib.h>
+#include "Game_Object.h"
 
-class Player {
+using namespace Zeni;
+
+class Player : public Game_Object {
 public:
-    Player(const Zeni::Camera &camera_,
-           const Zeni::Vector3f &end_point_b_,
-           const float radius_);
+    Player(const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
+          const Zeni::Vector3f &scale_ = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
+          const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
+    Player(const Player &rhs);
+    Player & operator=(const Player &rhs);
+    ~Player();
     
-    // Level 1
-    const Zeni::Camera & get_camera() const {return m_camera;}
-    
-    // Level 2
-    void set_position(const Zeni::Point3f &position);
-    
-    void adjust_pitch(const float &phi);
-    void turn_left_xy(const float &theta);
-    void adjust_roll(const float &rho);
-    
-    // Level 3
-    const Zeni::Collision::Capsule & get_body() const {return m_body;}
-    bool is_on_ground() const {return m_is_on_ground;}
-    
-    const Zeni::Vector3f & get_velocity() const {return m_velocity;}
-    void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
-    
-    void set_on_ground(const bool &is_on_ground_);
-    void jump();
-    
+    void render();
     void step(const float &time_step);
+    void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
+    Point3f get_position() {return m_position;}
+    
+    void collide();
+    
+    const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
     
 private:
-    void create_body();
+    //Member variables
+    //Vector3f m_velocity;
     
-    // Level 1/2
-    Zeni::Camera m_camera;
+    //void create_body();
+    
+    // Level 1
+    static Zeni::Model * m_model;
+    static unsigned long m_instance_count;
+    
+    Zeni::Sound_Source * m_source;
     
     // Level 2
-    Zeni::Vector3f m_end_point_b;
-    float m_radius;
+    //    Zeni::Point3f m_position;
+    //    Zeni::Vector3f m_scale;
+    //    Zeni::Quaternion m_rotation;
     
     // Level 3
-    Zeni::Collision::Capsule m_body; // collision
-    Zeni::Vector3f m_velocity;
-    bool m_is_on_ground;
+    //Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
     
     // Level 4
-    // Controls are external to Player
+    // A stationary Player has no controls
 };
 
-#endif /* defined(__game__Player__) */
+#endif
