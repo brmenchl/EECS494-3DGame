@@ -13,7 +13,7 @@ using namespace std;
 using namespace Zeni;
 
 Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
-                                   Vector3f(3000.0f, 3000.0f, 3000.0f)),
+                                   Vector3f(9000.0f, 9000.0f, 9000.0f)),
                             m_player_crate(Point3f(150.0f, 0.0f, 50.0f),
                                     Vector3f(30.0f, 30.0f, 30.0f)),
             m_camera(Camera(Point3f(0.0f, 0.0f, 50.0f),
