@@ -22,7 +22,7 @@ Player::Player(const Point3f &corner_,
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     if(!m_instance_count)
-        m_model = new Model("models/crate.3ds");
+        m_model = new Model("models/jet01.3ds");
     ++m_instance_count;
     
     create_body();
