@@ -43,6 +43,7 @@ private:
     const float thrust_delta;
     const float thrust_range;
     float thrust_amount;
+    float time_remaining;
     
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;

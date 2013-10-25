@@ -7,6 +7,8 @@
 //
 
 #include "Play_State.h"
+#include <sstream>
+#include <String.h>
 using namespace std;
 using namespace Zeni;
 
@@ -24,9 +26,10 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         thrust_range(10.0f)
     {
     
-        look_sensitivity = 15000.0f;
+        look_sensitivity = 20000.0f;
         roll_sensitivity = 6500.0f;
         thrust_sensitivity = 30.0f;
+        time_remaining = 30.0f;
                 
                 
         set_pausable(true);
@@ -64,12 +67,22 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         vr.set_3d(m_camera.get_camera());
         m_crate.render();
         m_player_crate.render();
+        
+        vr.set_2d();
+        ostringstream stream;
+        stream.precision(3);
+        stream << "Time left: ";
+        stream << time_remaining;
+        Zeni::String hud(stream.str());
+        get_Fonts()["title"].render_text(hud, Point2f(), Color());
+
     }
 
     void Play_State::perform_logic() {
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
+        time_remaining -= processing_time;
         
         /** Get current rotation from the player **/
         Quaternion rotation = m_player_crate.get_rotation();
