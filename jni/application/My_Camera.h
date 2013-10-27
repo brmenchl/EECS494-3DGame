@@ -24,9 +24,10 @@ public:
     
     const Zeni::Camera & get_camera() const {return m_camera;}
     
-    void attach_camera(Game_Object* obj);
     void detach_camera();
     bool get_is_attached();
+    void track(Game_Object* obj);
+    void chase(Game_Object* obj);
     
     // Adjusting position and orientation of camera
     void set_position(const Zeni::Point3f &position);
@@ -44,6 +45,13 @@ public:
     void step(const float &time_step);
     
 private:
+    enum CAMERA_STATE {
+        FREE,
+        TRACKING,
+        CHASING
+    };
+    
+    int m_camera_state;
     Game_Object* m_attached_object;
     Zeni::Camera m_camera;
     float follow_distance;
@@ -54,6 +62,7 @@ private:
     
     void create_body();
     void chase_attached();
+    void track_attached();
 };
 
 #endif /* defined(__game__Camera__) */

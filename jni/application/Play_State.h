@@ -34,6 +34,14 @@ public:
     void on_event(const Zeni::Zeni_Input_ID &id, const float &confidence, const int &action);
     
 private:
+    enum GAME_STATE {
+        CUT_SCENE,
+        PLAY,
+        LOSE,
+        WIN
+    };
+    
+    int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
     float look_sensitivity;
@@ -48,9 +56,10 @@ private:
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;
-    Player m_player_crate;
+    Player m_player;
     
     void partial_step(const float &time_step, const Vector3f &velocity);
+    
 
 };
 

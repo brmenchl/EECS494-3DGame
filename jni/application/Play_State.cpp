@@ -14,20 +14,21 @@ using namespace Zeni;
 
 Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
-                            m_player_crate(Point3f(150.0f, 0.0f, 50.0f),
+                            m_player(Point3f(150.0f, 150.0f, 150.0f),
                                     Vector3f(5.0f, 5.0f, 5.0f)),
-            m_camera(Camera(Point3f(0.0f, 0.0f, 50.0f),
+            m_camera(Camera(Point3f(1000.0f, 0.0f, 50.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
              11.0f),
         base_thrust(15.0f),
         thrust_delta(0.5f),
-        thrust_range(10.0f)
+        thrust_range(10.0f),
+        m_game_state(CUT_SCENE)
     {
     
-        look_sensitivity = 20000.0f;
-        roll_sensitivity = 6500.0f;
+        look_sensitivity = 25000.0f;
+        roll_sensitivity = 8000.0f;
         thrust_sensitivity = 30.0f;
         time_remaining = 30.0f;
                 
@@ -42,11 +43,13 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
+        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
         set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
 
+        m_camera.track(&m_player);
 
     }
 
@@ -66,7 +69,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         m_crate.render();
-        m_player_crate.render();
+        m_player.render();
         
         vr.set_2d();
         ostringstream stream;
@@ -79,32 +82,43 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     }
 
     void Play_State::perform_logic() {
+        //Independent of GAME_STATE
+        
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
         time_remaining -= processing_time;
         
-        /** Get current rotation from the player **/
-        Quaternion rotation = m_player_crate.get_rotation();
+        if (time_remaining < 28.0) {
+            m_camera.chase(&m_player);
+            m_game_state = PLAY;
+        }
         
+        /** Get current rotation from the player **/
+        Quaternion rotation = m_player.get_rotation();
         const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
         
-        /** Calculate current thrust**/
-        float desired_thrust = base_thrust + thrust_range * y;
-        
-        if (thrust_amount > desired_thrust) {
-            thrust_amount -= thrust_delta;
+        //Get jet thrust
+        if (m_game_state == PLAY) {
+            /** Calculate current thrust**/
+            float desired_thrust = base_thrust + thrust_range * y;
+            
+            if (thrust_amount > desired_thrust) {
+                thrust_amount -= thrust_delta;
+            }
+            
+            if (thrust_amount < desired_thrust) {
+                thrust_amount += thrust_delta;
+            }
+            
+            if (thrust_amount == desired_thrust) {
+                thrust_amount = desired_thrust;
+            }
+
+        } else {
+            thrust_amount = base_thrust;
         }
         
-        if (thrust_amount < desired_thrust) {
-            thrust_amount += thrust_delta;
-        }
-        
-        if (thrust_amount == desired_thrust) {
-            thrust_amount = desired_thrust;
-        }
-        
-        cout << "Thrust: " << thrust_amount << endl;
         
         /** Get velocity vector split into a number of axes **/
         const Vector3f velocity = (thrust_amount) * 50.0f * forward.get_ij() + (thrust_amount) * 50.0f * forward.get_k();
@@ -128,9 +142,12 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             partial_step(time_step, x_vel);
             partial_step(time_step, y_vel);
             partial_step(time_step, z_vel);
+            m_camera.step(time_step);
             
             /** Rotate the aircraft **/
-            m_player_crate.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
+            if (m_game_state == PLAY) {
+                m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
+            }
             
             /** keep player above the ground **/
             const Point3f &position = m_camera.get_camera().position;
@@ -142,10 +159,10 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
 
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
         //m_camera.set_velocity(velocity);
-        m_player_crate.set_velocity(velocity);
+        m_player.set_velocity(velocity);
         //const Point3f backup_position = m_camera.get_camera().position;
-        m_camera.step(time_step);
-        m_player_crate.step(time_step);
+        //m_camera.step(time_step);
+        m_player.step(time_step);
         
     }
 
@@ -190,11 +207,15 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                 break;
                 
             case 6: //D up
-                m_camera.attach_camera(&m_player_crate);
+                m_camera.chase(&m_player);
                 break;
                 
             case 10://D down
                 m_camera.detach_camera();
+                break;
+                
+            case 12:
+                m_camera.track(&m_player);
                 break;
                 
             case 7: //Trigger Right - Thrust

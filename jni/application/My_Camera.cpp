@@ -19,7 +19,8 @@ My_Camera::My_Camera(const Camera &camera_,
                const float radius_)
 : m_camera(camera_),
 m_end_point_b(end_point_b_),
-m_radius(radius_)
+m_radius(radius_),
+m_camera_state(FREE)
 {
     follow_distance = -300;
     m_attached_object = NULL;
@@ -27,12 +28,19 @@ m_radius(radius_)
     create_body();
 }
 
-void My_Camera::attach_camera(Game_Object* obj) {
+void My_Camera::track(Game_Object* obj) {
     m_attached_object = obj;
+    m_camera_state = TRACKING;
+}
+
+void My_Camera::chase(Game_Object* obj) {
+    m_attached_object = obj;
+    m_camera_state = CHASING;
 }
 
 void My_Camera::detach_camera() {
     m_attached_object = NULL;
+    m_camera_state = FREE;
 }
 
 bool My_Camera::get_is_attached() {
@@ -69,18 +77,27 @@ void My_Camera::increase_follow_distance() {
 }
 
 void My_Camera::decrease_follow_distance() {
-    if (follow_distance < 200) {
+    if (follow_distance < 300) {
         follow_distance += 100;
     }
 }
 
 void My_Camera::step(const float &time_step) {
-    if (get_is_attached()) {
-        //Use the position of the object we are attached to in order to position camera
-        chase_attached();
-    } else {
-        m_camera.position += time_step * m_velocity;
+    
+    switch (m_camera_state) {
+        case FREE:
+            m_camera.position += time_step * m_velocity;
+            break;
+            
+        case TRACKING:
+            track_attached();
+            break;
+            
+        case CHASING:
+            chase_attached();
+            break;
     }
+
     create_body();
 }
 
@@ -106,9 +123,14 @@ void My_Camera::chase_attached() {
     
     move_vec = Vector3f(strict_new_pos.x - cam_cur_pos.x, strict_new_pos.y - cam_cur_pos.y, strict_new_pos.z - cam_cur_pos.z);
     
-    next_pos = cam_cur_pos + move_vec * 0.01f;
+    next_pos = cam_cur_pos + move_vec * 0.02f;
     
     m_camera.position = next_pos;
+    m_camera.look_at(m_attached_object->get_position());
+}
+
+void My_Camera::track_attached() {
+
     m_camera.look_at(m_attached_object->get_position());
     
 }
