@@ -21,6 +21,7 @@ My_Camera::My_Camera(const Camera &camera_,
 m_end_point_b(end_point_b_),
 m_radius(radius_)
 {
+    follow_distance = -300;
     m_attached_object = NULL;
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
     create_body();
@@ -61,6 +62,18 @@ void My_Camera::turn_left_xy(const float &theta) {
     m_camera.turn_left_xy(theta);
 }
 
+void My_Camera::increase_follow_distance() {
+    if (follow_distance > -400) {
+        follow_distance -= 100;
+    }
+}
+
+void My_Camera::decrease_follow_distance() {
+    if (follow_distance < 200) {
+        follow_distance += 100;
+    }
+}
+
 void My_Camera::step(const float &time_step) {
     if (get_is_attached()) {
         //Use the position of the object we are attached to in order to position camera
@@ -84,9 +97,18 @@ void My_Camera::create_body() {
 }
 
 void My_Camera::chase_attached() {
-    Vector3f pull_back = (m_attached_object->get_rotation() * Vector3f(100,0,-25)) * -1;
-    m_camera.position = m_attached_object->get_corner() + pull_back;
-    m_camera.orientation = m_attached_object->get_rotation();
+    Vector3f move_vec;
+    Point3f strict_new_pos, cam_cur_pos, next_pos;
+    cam_cur_pos = m_camera.position;
     
+    Vector3f pull_back = (m_attached_object->get_rotation() * Vector3f(follow_distance,0,25));
+    strict_new_pos = m_attached_object->get_position() + pull_back;
+    
+    move_vec = Vector3f(strict_new_pos.x - cam_cur_pos.x, strict_new_pos.y - cam_cur_pos.y, strict_new_pos.z - cam_cur_pos.z);
+    
+    next_pos = cam_cur_pos + move_vec * 0.01f;
+    
+    m_camera.position = next_pos;
+    m_camera.look_at(m_attached_object->get_position());
     
 }

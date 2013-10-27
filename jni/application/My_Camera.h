@@ -33,6 +33,8 @@ public:
     void adjust_pitch(const float &phi);
     void turn_left_xy(const float &theta);
     void adjust_roll(const float &rho);
+    void increase_follow_distance();
+    void decrease_follow_distance();
     
     const Zeni::Vector3f & get_velocity() const {return m_velocity;}
     void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
@@ -44,6 +46,7 @@ public:
 private:
     Game_Object* m_attached_object;
     Zeni::Camera m_camera;
+    float follow_distance;
     Zeni::Vector3f m_end_point_b;
     float m_radius;
     Zeni::Collision::Capsule m_body; // collision
