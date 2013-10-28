@@ -41,6 +41,7 @@ private:
         WIN
     };
     
+    list<Game_Object*> objects;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
@@ -56,6 +57,7 @@ private:
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;
+    Crate m_obstacle;
     Player m_player;
     
     void partial_step(const float &time_step, const Vector3f &velocity);

@@ -8,14 +8,18 @@
 
 #include "Play_State.h"
 #include <sstream>
+#include <iostream>
+#include <fstream>
 #include <String.h>
 using namespace std;
 using namespace Zeni;
 
 Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
+                            m_obstacle(Point3f(3500.0f, 3500.0f, 1700.0f),
+                                       Vector3f(300.0f, 300.0f, 300.0f)),
                             m_player(Point3f(150.0f, 150.0f, 150.0f),
-                                    Vector3f(5.0f, 5.0f, 5.0f)),
+                                    Vector3f(1.0f, 1.0f, 1.0f)),
             m_camera(Camera(Point3f(1000.0f, 0.0f, 50.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
@@ -25,6 +29,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         thrust_delta(0.5f),
         thrust_range(10.0f),
         m_game_state(CUT_SCENE),
+        objects(),
         x(0),
         y(0),
         w(0),
@@ -37,7 +42,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         thrust_sensitivity = 30.0f;
         time_remaining = 30.0f;
                 
-                
+        objects.push_back(&m_obstacle);
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -55,7 +60,6 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
 
         m_camera.track(&m_player);
-
     }
 
     void Play_State::on_push() {
@@ -74,6 +78,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         m_crate.render();
+        m_obstacle.render();
         m_player.render();
         
         vr.set_2d();
@@ -87,11 +92,26 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     }
 
     void Play_State::perform_logic() {
-        //Independent of GAME_STATE
+        
+        //Update clocks
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
-        time_remaining -= processing_time;
+        
+        /** Check lose condition */
+        if (time_remaining > 0) {
+            time_remaining -= processing_time;
+        } else if (time_remaining < 0) {
+            time_remaining = 0;
+            m_game_state = LOSE;
+            m_camera.track(&m_player);
+
+            /** This is an example of writing to file. Not much use in the lose section, should be moved to win later */
+            ofstream myfile;
+            myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
+            myfile << time_remaining;
+            myfile.close();
+        }
         
         
         /** Just testing playing around with game states here! */
@@ -99,17 +119,11 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             m_camera.chase(&m_player);
             m_game_state = PLAY;
         }
-        
-        if (time_remaining < 0.0) {
-            m_camera.track(&m_player);
-            m_game_state = LOSE;
-        }
         /** End game states tests */
         
         
         /** Get current rotation from the player **/
-        Quaternion rotation = m_player.get_rotation();
-        const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
+        const Vector3f forward = m_player.get_forward_vec();
         
         //Get jet thrust
         if (m_game_state == PLAY) {
@@ -132,18 +146,14 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             thrust_amount = base_thrust;
         }
         
-        
-        /** Get velocity vector split into a number of axes **/
+        /** Get velocity vector */
         const Vector3f velocity = (thrust_amount) * 50.0f * forward.get_ij() + (thrust_amount) * 50.0f * forward.get_k();
-        const Vector3f y_vel = velocity.get_i();
-        const Vector3f x_vel = velocity.get_j();
-        const Vector3f z_vel = velocity.get_k();
         
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
             processing_time = 0.1f;
         }
-        
+        cout << "("<<m_player.get_position().x<<","<<m_player.get_position().y<<","<<m_player.get_position().z<<")\n";;
         /** Physics processing loop**/
         for(float time_step = 0.05f; processing_time > 0.0f; processing_time -= time_step) {
         
@@ -152,31 +162,25 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             }
             
             /** Try to move on each axis **/
-            partial_step(time_step, x_vel);
-            partial_step(time_step, y_vel);
-            partial_step(time_step, z_vel);
+            partial_step(time_step, velocity.get_i());
+            partial_step(time_step, velocity.get_j());
+            partial_step(time_step, velocity.get_k());
             m_camera.step(time_step);
             
             /** Rotate the aircraft **/
             if (m_game_state == PLAY) {
                 m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
-            }
-            
-            /** keep player above the ground **/
-            const Point3f &position = m_camera.get_camera().position;
-            if(position.z < 50.0f) {
-                m_camera.set_position(Point3f(position.x, position.y, 50.0f));
+                m_player.adjust_vectors();
             }
         }
     }
 
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
-        //m_camera.set_velocity(velocity);
         m_player.set_velocity(velocity);
-        //const Point3f backup_position = m_camera.get_camera().position;
-        //m_camera.step(time_step);
         m_player.step(time_step);
-        
+        if(m_player.is_crashing(objects)){
+            get_Game().pop_state();//We should fix this to make a crash animation, or something.
+        }
     }
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {

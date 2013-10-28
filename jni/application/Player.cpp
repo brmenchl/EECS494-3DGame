@@ -15,6 +15,13 @@ using namespace Zeni;
 using namespace Zeni::Collision;
 using namespace std;
 
+#define MIDDLE_TO_NOSE 10
+#define MIDDLE_TO_TAIL 55
+#define MIDDLE_TO_WING 60
+Vector3f Player::WING_Z=Vector3f(0,0,5.0f);
+Vector3f Player::WING_X=Vector3f(15.0f,0,0);
+Vector3f Player::WING_SPAN=Vector3f(0,150.0f,0);
+
 Player::Player(const Point3f &corner_,
              const Vector3f &scale_,
              const Quaternion &rotation_)
@@ -34,7 +41,7 @@ m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     ++m_instance_count;
     
-    create_bounding_box();
+    create_body();
 }
 
 Player & Player::operator=(const Player &rhs) {
@@ -79,25 +86,41 @@ void Player::collide() {
 Model * Player::m_model = 0;
 unsigned long Player::m_instance_count = 0lu;
 
-Point3f get_front(){
-    //These points are arbitrary, were going to have to figure out the dimensions of the plane in-game
-    return Point3f(0.0f,0.0f,0.0f);
-}
-Point3f get_back() {
-    return Point3f(0.0f,0.0f,0.0f);
-}
-Point3f get_wing_corner(){
-    return Point3f(0.0f,0.0f,0.0f);
-}
-float get_radius(){
-    return 3.0f;
+Point3f Player::get_front(){
+    return m_position+MIDDLE_TO_NOSE*m_forward_vec;
 }
 
-void Player::create_bounding_box() {
-    m_fuselage = Capsule(get_front(), get_back(), get_radius());
-    m_wings = Parallelepiped(get_wing_corner(),
-                             m_rotation * m_scale.get_i(),
-                             m_rotation * m_scale.get_j(),
-                             m_rotation * m_scale.get_k());
+Point3f Player::get_back() {
+    return m_position-MIDDLE_TO_TAIL*m_forward_vec;
+}
+
+Point3f Player::get_wing_corner(){
+    return m_position+MIDDLE_TO_WING*(m_up_vec%m_forward_vec);
+}
+
+float get_radius(){
+    return 5.0f;
+}
+
+const std::pair<Zeni::Collision::Capsule, Zeni::Collision::Parallelepiped> & Player::get_player_body() const{
+    return m_body;
+}
+
+bool Player::is_crashing(list<Game_Object*> &objects){
+    std::list<Game_Object*>::iterator it;
+    for(it = objects.begin(); it != objects.end(); it++){
+        if(Player::get_player_body().first.intersects((*it)->get_body()) || Player::get_player_body().second.intersects((*it)->get_body())){
+            return true;
+        }
+    }
+    return false;
+}
+
+void Player::create_body() {
+    m_body.first = Capsule(get_front(), get_back(), get_radius());
+    m_body.second = Parallelepiped(get_wing_corner(),
+                             m_rotation * WING_X,
+                             m_rotation * WING_SPAN,
+                             m_rotation * WING_Z);
     m_source->set_position(m_position + m_rotation * m_scale / 2.0f);
 }
