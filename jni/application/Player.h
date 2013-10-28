@@ -37,13 +37,17 @@ private:
     //Member variables
     //Vector3f m_velocity;
     
-    //void create_body();
+    void create_bounding_box();
     
     // Level 1
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
     
     Zeni::Sound_Source * m_source;
+    
+    //Together these make the jet bounding box
+    Zeni::Collision::Capsule m_fuselage;
+    Zeni::Collision::Parallelepiped m_wings;
     
     // Level 2
     //    Zeni::Point3f m_position;

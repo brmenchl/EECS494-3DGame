@@ -22,7 +22,7 @@ Player::Player(const Point3f &corner_,
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     if(!m_instance_count)
-        m_model = new Model("models/jet01.3ds");
+        m_model = new Model("models/plane.3ds");
     ++m_instance_count;
     
     create_body();
@@ -34,7 +34,7 @@ m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     ++m_instance_count;
     
-    create_body();
+    create_bounding_box();
 }
 
 Player & Player::operator=(const Player &rhs) {
@@ -78,3 +78,26 @@ void Player::collide() {
 
 Model * Player::m_model = 0;
 unsigned long Player::m_instance_count = 0lu;
+
+Point3f get_front(){
+    //These points are arbitrary, were going to have to figure out the dimensions of the plane in-game
+    return Point3f(0.0f,0.0f,0.0f);
+}
+Point3f get_back() {
+    return Point3f(0.0f,0.0f,0.0f);
+}
+Point3f get_wing_corner(){
+    return Point3f(0.0f,0.0f,0.0f);
+}
+float get_radius(){
+    return 3.0f;
+}
+
+void Player::create_bounding_box() {
+    m_fuselage = Capsule(get_front(), get_back(), get_radius());
+    m_wings = Parallelepiped(get_wing_corner(),
+                             m_rotation * m_scale.get_i(),
+                             m_rotation * m_scale.get_j(),
+                             m_rotation * m_scale.get_k());
+    m_source->set_position(m_position + m_rotation * m_scale / 2.0f);
+}
