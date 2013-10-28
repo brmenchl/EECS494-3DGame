@@ -83,16 +83,24 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
 
     void Play_State::perform_logic() {
         //Independent of GAME_STATE
-        
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
         time_remaining -= processing_time;
         
-        if (time_remaining < 28.0) {
+        
+        /** Just testing playing around with game states here! */
+        if (time_remaining < 28.0 && time_remaining > 20.0) {
             m_camera.chase(&m_player);
             m_game_state = PLAY;
         }
+        
+        if (time_remaining < 0.0) {
+            m_camera.track(&m_player);
+            m_game_state = LOSE;
+        }
+        /** End game states tests */
+        
         
         /** Get current rotation from the player **/
         Quaternion rotation = m_player.get_rotation();
