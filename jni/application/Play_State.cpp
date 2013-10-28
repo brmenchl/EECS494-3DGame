@@ -28,11 +28,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                                        Vector3f(300.0f, 300.0f, 300.0f)),
                             m_player(Point3f(100.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
-            m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
-                    Quaternion(),
-                    1.0f, 10000.0f),
-             Vector3f(0.0f, 0.0f, -39.0f),
-             11.0f),
+                            m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
+                                            Quaternion(),
+                                            1.0f, 10000.0f),
+                                     Vector3f(0.0f, 0.0f, -39.0f),
+                                     11.0f),
+                            m_ground(),
         m_game_state(CUT_SCENE),
         objects(),
         x(0),
@@ -69,7 +70,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         objects.push_back(b10);
         objects.push_back(b11);
 
-
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -105,11 +105,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
-        m_crate.render();
+        //m_crate.render();
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
             (*it)->render();
         }
+        m_ground.groundRender(m_player.get_position());
         m_player.render();
         
         vr.set_2d();
@@ -139,7 +140,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     }
 
     void Play_State::perform_logic() {
-        
+       // cout << m_ground.
         //Update clocks
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));

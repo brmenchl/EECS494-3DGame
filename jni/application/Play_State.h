@@ -13,6 +13,7 @@
 #include <zenilib.h>
 #include "Player.h"
 #include "Crate.h"
+#include "Environment.h"
 #include "My_Camera.h"
 
 using namespace std;
@@ -68,6 +69,7 @@ private:
     Crate m_crate;
     Crate m_obstacle;
     Player m_player;
+    Environment m_ground;
     
     void partial_step(const float &time_step, const Vector3f &velocity);
     
