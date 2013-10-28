@@ -24,7 +24,12 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         base_thrust(15.0f),
         thrust_delta(0.5f),
         thrust_range(10.0f),
-        m_game_state(CUT_SCENE)
+        m_game_state(CUT_SCENE),
+        x(0),
+        y(0),
+        w(0),
+        h(0),
+        roll(0)
     {
     
         look_sensitivity = 25000.0f;
