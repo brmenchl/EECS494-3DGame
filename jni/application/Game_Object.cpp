@@ -18,6 +18,8 @@ Game_Object::Game_Object(const Point3f &position_,
 : m_position(position_),
 m_scale(scale_),
 m_rotation(rotation_),
+m_forward_vec(Vector3f(1,0,0)),
+m_up_vec(Vector3f(0,0,1)),
 m_velocity(Vector3f(0,0,0))
 {
     if(!m_instance_count)
@@ -43,7 +45,6 @@ Game_Object & Game_Object::operator=(const Game_Object &rhs) {
     m_rotation = rhs.m_rotation;
     
     create_body();
-    
     return *this;
 }
 
@@ -58,6 +59,19 @@ Game_Object::~Game_Object() {
 void Game_Object::step(const float &time_step) {
     m_position += time_step * m_velocity;
     create_body();
+}
+
+void Game_Object::adjust_vectors() {
+    m_forward_vec = m_rotation * Vector3f(1,0,0).normalized();
+    m_up_vec = m_rotation * Vector3f(0,0,1).normalized();
+}
+
+Vector3f Game_Object::get_forward_vec(){
+    return m_forward_vec;
+}
+
+Vector3f Game_Object::get_up_vec(){
+    return m_up_vec;
 }
 
 
