@@ -36,7 +36,7 @@ public:
     void update_time(float processing_time);
     void check_lose_condition();
     Vector3f get_player_velocity();
-    void physics_loop(float processing_time, Vector3f velocity);
+    void physics_loop(float processing_time);
     void rotate_player();
     void check_collisions();
     
@@ -48,16 +48,18 @@ private:
         WIN
     };
     
+    static float look_sensitivity;
+    static float roll_sensitivity;
+    static float thrust_sensitivity;
+    static float yaw_modifier;
+    static float base_thrust;
+    static float thrust_delta;
+    static float thrust_range;
+    
     list<Game_Object*> objects;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
-    float look_sensitivity;
-    float roll_sensitivity;
-    float thrust_sensitivity;
-    const float base_thrust;
-    const float thrust_delta;
-    const float thrust_range;
     float thrust_amount;
     float time_remaining;
     

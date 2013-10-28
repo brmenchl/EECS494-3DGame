@@ -64,6 +64,7 @@ void Game_Object::step(const float &time_step) {
 void Game_Object::adjust_vectors() {
     m_forward_vec = m_rotation * Vector3f(1,0,0).normalized();
     m_up_vec = m_rotation * Vector3f(0,0,1).normalized();
+    m_left_vec = m_rotation * Vector3f(0,1,0).normalized();
 }
 
 Vector3f Game_Object::get_forward_vec(){
@@ -72,6 +73,10 @@ Vector3f Game_Object::get_forward_vec(){
 
 Vector3f Game_Object::get_up_vec(){
     return m_up_vec;
+}
+
+Vector3f Game_Object::get_left_vec() {
+    return m_left_vec;
 }
 
 

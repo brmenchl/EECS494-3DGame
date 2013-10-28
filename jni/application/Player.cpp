@@ -17,10 +17,10 @@ using namespace std;
 
 #define MIDDLE_TO_NOSE 10
 #define MIDDLE_TO_TAIL 55
-#define MIDDLE_TO_WING 60
+#define MIDDLE_TO_WING 50
 Vector3f Player::WING_Z=Vector3f(0,0,5.0f);
 Vector3f Player::WING_X=Vector3f(15.0f,0,0);
-Vector3f Player::WING_SPAN=Vector3f(0,150.0f,0);
+Vector3f Player::WING_SPAN=Vector3f(0,100.0f,0);
 
 Player::Player(const Point3f &corner_,
              const Vector3f &scale_,
@@ -87,15 +87,15 @@ Model * Player::m_model = 0;
 unsigned long Player::m_instance_count = 0lu;
 
 Point3f Player::get_front(){
-    return m_position+MIDDLE_TO_NOSE*m_forward_vec;
+    return m_position + MIDDLE_TO_NOSE * m_forward_vec * m_scale.x;
 }
 
 Point3f Player::get_back() {
-    return m_position-MIDDLE_TO_TAIL*m_forward_vec;
+    return m_position - MIDDLE_TO_TAIL * m_forward_vec * m_scale.x;
 }
 
 Point3f Player::get_wing_corner(){
-    return m_position+MIDDLE_TO_WING*(m_up_vec%m_forward_vec);
+    return m_position + MIDDLE_TO_WING * m_left_vec * m_scale.y;
 }
 
 float get_radius(){
@@ -117,10 +117,14 @@ bool Player::is_crashing(list<Game_Object*> &objects){
 }
 
 void Player::create_body() {
-    m_body.first = Capsule(get_front(), get_back(), get_radius());
+    //m_body.first = Capsule(get_front(), get_back(), get_radius());
+//    m_body.second = Parallelepiped(get_position(),
+//                             m_rotation * WING_X * m_scale.x,
+//                             m_rotation * WING_SPAN * 2 * m_scale.y,
+//                             m_rotation * WING_Z * m_scale.k);
     m_body.second = Parallelepiped(get_wing_corner(),
-                             m_rotation * WING_X,
-                             m_rotation * WING_SPAN,
-                             m_rotation * WING_Z);
+                                   m_rotation * -WING_SPAN * m_scale.y,
+                                   m_rotation * WING_X * m_scale.x,
+                                   m_rotation * WING_Z * m_scale.k);
     m_source->set_position(m_position + m_rotation * m_scale / 2.0f);
 }
