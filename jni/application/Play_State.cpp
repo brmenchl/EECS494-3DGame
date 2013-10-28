@@ -91,11 +91,11 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         
         switch (m_game_state) {
             case WIN:
-                
+                get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() / 2), Color());
                 break;
             
             case LOSE:
-                get_Fonts()["title"].render_text("You ran out of time!", Point2f(get_Window().get_width() / 2, get_Window().get_height() / 2), Color());
+                get_Fonts()["title"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() / 2), Color());
                 break;
                 
             default:
@@ -110,20 +110,34 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
+        Vector3f velocity;
         
-        /** Check lose condition */
-        if (time_remaining > 0) {
-            time_remaining -= processing_time;
-        } else if (time_remaining < 0) {
-            time_remaining = 0;
-            m_game_state = LOSE;
-            m_camera.track(&m_player);
+        update_time(processing_time);
+        velocity = get_player_velocity();
+        physics_loop(processing_time, velocity);
+        
+        switch (m_game_state) {
+            case CUT_SCENE: {
+                break;
+            }
+                
+            case PLAY: {
+                /** Check lose condition */
+                check_collisions();
+                check_lose_condition();
+                rotate_player();
+                break;
+            }
+                
+            case WIN: {
 
-            /** This is an example of writing to file. Not much use in the lose section, should be moved to win later */
-            ofstream myfile;
-            myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
-            myfile << time_remaining;
-            myfile.close();
+                break;
+            }
+                
+            case LOSE: {
+
+                break;
+            }
         }
         
         
@@ -134,10 +148,53 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         }
         /** End game states tests */
         
+    }
+
+    void Play_State::update_time(float processing_time) {
+        if (time_remaining > 0) {
+            time_remaining -= processing_time;
+        } else if (time_remaining < 0) {
+            time_remaining = 0;
+        }
+    }
+
+    void Play_State::check_lose_condition() {
+        if (time_remaining == 0) {
+            m_game_state = LOSE;
+            m_camera.track(&m_player);
+        }
+
+    }
+
+    void Play_State::physics_loop(float processing_time, Vector3f velocity) {
+        /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
+        if(processing_time > 0.1f) {
+            processing_time = 0.1f;
+        }
         
-        /** Get current rotation from the player **/
-        const Vector3f forward = m_player.get_forward_vec();
-        
+        /** Physics processing loop**/
+        for(float time_step = 0.05f; processing_time > 0.0f; processing_time -= time_step) {
+            
+            if(time_step > processing_time) {
+                time_step = processing_time;
+            }
+            
+            /** Try to move on each axis **/
+            partial_step(time_step, velocity.get_i());
+            partial_step(time_step, velocity.get_j());
+            partial_step(time_step, velocity.get_k());
+            m_camera.step(time_step);
+        }
+
+    }
+
+    void Play_State::rotate_player() {
+        /** Rotate the aircraft **/
+        m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
+        m_player.adjust_vectors();
+    }
+
+    Vector3f Play_State::get_player_velocity() {
         //Get jet thrust
         if (m_game_state == PLAY) {
             /** Calculate current thrust**/
@@ -154,46 +211,31 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             if (thrust_amount == desired_thrust) {
                 thrust_amount = desired_thrust;
             }
-
+            
         } else {
             thrust_amount = base_thrust;
         }
         
         /** Get velocity vector */
-        const Vector3f velocity = (thrust_amount) * 50.0f * forward.get_ij() + (thrust_amount) * 50.0f * forward.get_k();
-        
-        /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
-        if(processing_time > 0.1f) {
-            processing_time = 0.1f;
-        }
-        cout << "("<<m_player.get_position().x<<","<<m_player.get_position().y<<","<<m_player.get_position().z<<")\n";;
-        /** Physics processing loop**/
-        for(float time_step = 0.05f; processing_time > 0.0f; processing_time -= time_step) {
-        
-            if(time_step > processing_time) {
-                time_step = processing_time;
-            }
-            
-            /** Try to move on each axis **/
-            partial_step(time_step, velocity.get_i());
-            partial_step(time_step, velocity.get_j());
-            partial_step(time_step, velocity.get_k());
-            m_camera.step(time_step);
-            
-            /** Rotate the aircraft **/
-            if (m_game_state == PLAY) {
-                m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
-                m_player.adjust_vectors();
-            }
+        return Vector3f((thrust_amount) * 50.0f * m_player.get_forward_vec().get_ij() + (thrust_amount) * 50.0f * m_player.get_forward_vec().get_k());
+    }
+
+    void Play_State::check_collisions() {
+        if(m_player.is_crashing(objects)){
+            //            m_game_state = LOSE;
+            //            Play_State* newplay = new Play_State();
+            //            get_Game().push_state(newplay);
+            m_game_state = LOSE;
+            ofstream myfile;
+            myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
+            myfile << time_remaining << "\n";
+            myfile.close();
         }
     }
 
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
         m_player.set_velocity(velocity);
         m_player.step(time_step);
-        if(m_player.is_crashing(objects)){
-            get_Game().pop_state();//We should fix this to make a crash animation, or something.
-        }
     }
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {

@@ -33,6 +33,13 @@ public:
     void perform_logic();
     void on_event(const Zeni::Zeni_Input_ID &id, const float &confidence, const int &action);
     
+    void update_time(float processing_time);
+    void check_lose_condition();
+    Vector3f get_player_velocity();
+    void physics_loop(float processing_time, Vector3f velocity);
+    void rotate_player();
+    void check_collisions();
+    
 private:
     enum GAME_STATE {
         CUT_SCENE,
