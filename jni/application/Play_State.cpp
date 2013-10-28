@@ -170,10 +170,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             /** Rotate the aircraft **/
             if (m_game_state == PLAY) {
                 m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
-<<<<<<< HEAD
-=======
                 m_player.adjust_vectors();
->>>>>>> brad
             }
         }
     }
@@ -181,12 +178,9 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
         m_player.set_velocity(velocity);
         m_player.step(time_step);
-<<<<<<< HEAD
-=======
         if(m_player.is_crashing(objects)){
             get_Game().pop_state();//We should fix this to make a crash animation, or something.
         }
->>>>>>> brad
     }
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {
