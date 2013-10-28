@@ -28,6 +28,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                                        Vector3f(300.0f, 300.0f, 300.0f)),
                             m_player(Point3f(150.0f, 150.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
+                            m_ground(),
             m_camera(Camera(Point3f(1000.0f, 0.0f, 50.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
@@ -45,6 +46,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         time_remaining = 30.0f;
                 
         objects.push_back(&m_obstacle);
+        //objects.push_back(&m_ground);
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -80,7 +82,8 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
-        m_crate.render();
+        //m_crate.render();
+        m_ground.groundRender(m_player.get_position());
         m_obstacle.render();
         m_player.render();
         
@@ -111,7 +114,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     }
 
     void Play_State::perform_logic() {
-        
+       // cout << m_ground.
         //Update clocks
         const Time_HQ current_time = get_Timer_HQ().get_time();
         float processing_time = float(current_time.get_seconds_since(time_passed));
