@@ -22,13 +22,13 @@ float Play_State::base_thrust = 750.0f;
 float Play_State::thrust_delta = 25.0f;
 float Play_State::thrust_range = 500.0f;
 
-Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
+Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
                             m_obstacle(Point3f(3500.0f, 3500.0f, 1700.0f),
                                        Vector3f(300.0f, 300.0f, 300.0f)),
-                            m_player(Point3f(150.0f, 150.0f, 150.0f),
+                            m_player(Point3f(100.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
-            m_camera(Camera(Point3f(1000.0f, 0.0f, 50.0f),
+            m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
                     Quaternion(),
                     1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
@@ -43,8 +43,33 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     {
     
         time_remaining = 30.0f;
-                
+        
+        Crate* b1 = new Crate(Point3f(100, 500, 0), Vector3f(2000, 2000, 6000));
+        Crate* b2 = new Crate(Point3f(2500, 500, 0), Vector3f(2000, 2000, 3000));
+//        Crate* b3 = new Crate(Point3f(1000, 900, 0), Vector3f(100, 100, 900));
+//        Crate* b4 = new Crate(Point3f(1200, 900, 0), Vector3f(100, 100, 1500));
+//        Crate* b5 = new Crate(Point3f(1400, 900, 0), Vector3f(100, 100, 900));
+//        Crate* b6 = new Crate(Point3f(1600, 500, 0), Vector3f(400, 200, 3000));
+//        Crate* b7 = new Crate(Point3f(2100, 100, 0), Vector3f(200, 600, 3000));
+        Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000));
+        Crate* b9 = new Crate(Point3f(6000, 7800, 0), Vector3f(1000, 1000, 5000));
+        Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
+        Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
+        
         objects.push_back(&m_obstacle);
+        objects.push_back(b1);
+        objects.push_back(b2);
+//        objects.push_back(b3);
+//        objects.push_back(b4);
+//        objects.push_back(b5);
+//        objects.push_back(b6);
+//        objects.push_back(b7);
+        objects.push_back(b8);
+        objects.push_back(b9);
+        objects.push_back(b10);
+        objects.push_back(b11);
+
+
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -81,7 +106,10 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         m_crate.render();
-        m_obstacle.render();
+        std::list<Game_Object*>::iterator it;
+        for(it = objects.begin(); it != objects.end(); it++){
+            (*it)->render();
+        }
         m_player.render();
         
         vr.set_2d();
