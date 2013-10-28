@@ -47,9 +47,9 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         
         Crate* b1 = new Crate(Point3f(100, 500, 0), Vector3f(2000, 2000, 6000));
         Crate* b2 = new Crate(Point3f(2500, 500, 0), Vector3f(2000, 2000, 3000));
-//        Crate* b3 = new Crate(Point3f(1000, 900, 0), Vector3f(100, 100, 900));
-//        Crate* b4 = new Crate(Point3f(1200, 900, 0), Vector3f(100, 100, 1500));
-//        Crate* b5 = new Crate(Point3f(1400, 900, 0), Vector3f(100, 100, 900));
+        Crate* b3 = new Crate(Point3f(4000, 4000, 0), Vector3f(100, 100, 900));
+        Crate* b4 = new Crate(Point3f(4000, 4500, 0), Vector3f(100, 100, 1500));
+        Crate* b5 = new Crate(Point3f(4000, 5000, 0), Vector3f(100, 100, 900));
 //        Crate* b6 = new Crate(Point3f(1600, 500, 0), Vector3f(400, 200, 3000));
 //        Crate* b7 = new Crate(Point3f(2100, 100, 0), Vector3f(200, 600, 3000));
         Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000));
@@ -60,9 +60,9 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         objects.push_back(&m_obstacle);
         objects.push_back(b1);
         objects.push_back(b2);
-//        objects.push_back(b3);
-//        objects.push_back(b4);
-//        objects.push_back(b5);
+        objects.push_back(b3);
+        objects.push_back(b4);
+        objects.push_back(b5);
 //        objects.push_back(b6);
 //        objects.push_back(b7);
         objects.push_back(b8);
