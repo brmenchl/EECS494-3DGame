@@ -84,6 +84,19 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         stream << time_remaining;
         Zeni::String hud(stream.str());
         get_Fonts()["title"].render_text(hud, Point2f(), Color());
+        
+        switch (m_game_state) {
+            case WIN:
+                
+                break;
+            
+            case LOSE:
+                get_Fonts()["title"].render_text("You ran out of time!", Point2f(get_Window().get_width() / 2, get_Window().get_height() / 2), Color());
+                break;
+                
+            default:
+                break;
+        }
 
     }
 
