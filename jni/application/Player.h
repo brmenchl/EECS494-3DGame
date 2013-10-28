@@ -31,14 +31,16 @@ public:
     
     void collide();
     
-    const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
-    
+    const std::pair<Zeni::Collision::Capsule, Zeni::Collision::Parallelepiped> & get_player_body() const;
+    bool is_crashing(std::list<Game_Object*> &objects);
 private:
+    static Vector3f WING_Z;
+    static Vector3f WING_X;
+    static Vector3f WING_SPAN;
     //Member variables
     //Vector3f m_velocity;
-    
-    void create_bounding_box();
-    
+    void create_body();
+
     // Level 1
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
@@ -46,8 +48,15 @@ private:
     Zeni::Sound_Source * m_source;
     
     //Together these make the jet bounding box
-    Zeni::Collision::Capsule m_fuselage;
-    Zeni::Collision::Parallelepiped m_wings;
+    //Zeni::Collision::Capsule m_fuselage;
+    //Zeni::Collision::Parallelepiped m_wings;
+    //FIRST COLLISION IS FUSELAGE, SECOND IS WINGS
+    std::pair<Zeni::Collision::Capsule, Zeni::Collision::Parallelepiped> m_body;
+
+    
+    Point3f get_front();
+    Point3f get_back();
+    Point3f get_wing_corner();
     
     // Level 2
     //    Zeni::Point3f m_position;

@@ -16,6 +16,8 @@ using namespace Zeni;
 
 Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
+                            m_obstacle(Point3f(3500.0f, 3500.0f, 1700.0f),
+                                       Vector3f(300.0f, 300.0f, 300.0f)),
                             m_player(Point3f(150.0f, 150.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
             m_camera(Camera(Point3f(1000.0f, 0.0f, 50.0f),
@@ -27,6 +29,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         thrust_delta(0.5f),
         thrust_range(10.0f),
         m_game_state(CUT_SCENE),
+        objects(),
         x(0),
         y(0),
         w(0),
@@ -39,7 +42,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         thrust_sensitivity = 30.0f;
         time_remaining = 30.0f;
                 
-                
+        objects.push_back(&m_obstacle);
         set_pausable(true);
         
         set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
@@ -75,6 +78,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         m_crate.render();
+        m_obstacle.render();
         m_player.render();
         
         vr.set_2d();
@@ -132,8 +136,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         
         
         /** Get current rotation from the player **/
-        Quaternion rotation = m_player.get_rotation();
-        const Vector3f forward = rotation * Vector3f(1,0,0).normalized();
+        const Vector3f forward = m_player.get_forward_vec();
         
         //Get jet thrust
         if (m_game_state == PLAY) {
@@ -163,7 +166,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
         if(processing_time > 0.1f) {
             processing_time = 0.1f;
         }
-        
+        cout << "("<<m_player.get_position().x<<","<<m_player.get_position().y<<","<<m_player.get_position().z<<")\n";;
         /** Physics processing loop**/
         for(float time_step = 0.05f; processing_time > 0.0f; processing_time -= time_step) {
         
@@ -180,6 +183,7 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
             /** Rotate the aircraft **/
             if (m_game_state == PLAY) {
                 m_player.rotate(Quaternion(-w / (look_sensitivity * 7), h / look_sensitivity, roll / roll_sensitivity));
+                m_player.adjust_vectors();
             }
         }
     }
@@ -187,6 +191,9 @@ Play_State::Play_State() : m_crate(Point3f(-200.0f, -200.0f, 0.0f),
     void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
         m_player.set_velocity(velocity);
         m_player.step(time_step);
+        if(m_player.is_crashing(objects)){
+            get_Game().pop_state();//We should fix this to make a crash animation, or something.
+        }
     }
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {
