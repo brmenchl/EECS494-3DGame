@@ -20,7 +20,7 @@ float Play_State::thrust_sensitivity = 30.0f;
 float Play_State::yaw_modifier = 5.0f;
 float Play_State::base_thrust = 750.0f;
 float Play_State::thrust_delta = 25.0f;
-float Play_State::thrust_range = 500.0f;
+float Play_State::thrust_range = 250.0f;
 
 Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
@@ -105,12 +105,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
-        //m_crate.render();
+        m_crate.render();
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
             (*it)->render();
         }
-        m_ground.groundRender(m_player.get_position());
+        //m_ground.groundRender(m_player.get_position());
         m_player.render();
         
         vr.set_2d();
@@ -129,6 +129,13 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             case LOSE: {
                 Font &f = get_Fonts()["title"];
                 get_Fonts()["title"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() / 2), Color());
+                get_Fonts()["title"].render_text("Press B to retry", Point2f(30, get_Window().get_height() / 2 + f.get_text_height()), Color());
+                break;
+            }
+                
+            case CRASH: {
+                Font &f = get_Fonts()["title"];
+                get_Fonts()["title"].render_text("You crashed!", Point2f(30, get_Window().get_height() / 2), Color());
                 get_Fonts()["title"].render_text("Press B to retry", Point2f(30, get_Window().get_height() / 2 + f.get_text_height()), Color());
                 break;
             }
@@ -169,6 +176,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             }
                 
             case LOSE: {
+                update_time(processing_time);
+                physics_loop(processing_time);
+                break;
+            }
+                
+            case CRASH: {
                 update_time(processing_time);
                 physics_loop(processing_time);
                 break;
@@ -262,7 +275,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             //            m_game_state = LOSE;
             //            Play_State* newplay = new Play_State();
             //            get_Game().push_state(newplay);
-            m_game_state = LOSE;
+            m_game_state = CRASH;
             ofstream myfile;
             myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
             myfile << time_remaining << "\n";
@@ -352,7 +365,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 break;
                 
             case 13: {//B button
-                if (m_game_state == LOSE) {
+                if (m_game_state == LOSE || m_game_state == CRASH) {
+                    get_Game().pop_state();
                     Play_State* newplay = new Play_State();
                     get_Game().push_state(newplay);
                 }

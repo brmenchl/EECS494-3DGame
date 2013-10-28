@@ -46,6 +46,7 @@ private:
         CUT_SCENE,
         PLAY,
         LOSE,
+        CRASH,
         WIN
     };
     

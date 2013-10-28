@@ -21,7 +21,7 @@ My_Camera::My_Camera(const Camera &camera_,
 m_end_point_b(end_point_b_),
 m_radius(radius_),
 m_camera_state(FREE),
-follow_distance(50)
+follow_distance(25)
 {
     m_attached_object = NULL;
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
@@ -71,14 +71,14 @@ void My_Camera::turn_left_xy(const float &theta) {
 }
 
 void My_Camera::increase_follow_distance() {
-    if (follow_distance < 100) {
-        follow_distance += 50;
+    if (follow_distance < 50) {
+        follow_distance += 25;
     }
 }
 
 void My_Camera::decrease_follow_distance() {
-    if (follow_distance > 50) {
-        follow_distance -= 50;
+    if (follow_distance > 25) {
+        follow_distance -= 25;
     }
 }
 
@@ -123,7 +123,7 @@ void My_Camera::chase_attached() {
     
     move_vec = Vector3f(strict_new_pos.x - cam_cur_pos.x, strict_new_pos.y - cam_cur_pos.y, strict_new_pos.z - cam_cur_pos.z);
     
-    next_pos = cam_cur_pos + move_vec * 0.02f;
+    next_pos = cam_cur_pos + move_vec * 0.03f;
     
     m_camera.position = next_pos;
     m_camera.look_at(m_attached_object->get_position());
