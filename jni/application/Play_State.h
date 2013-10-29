@@ -15,6 +15,7 @@
 #include "Crate.h"
 #include "Environment.h"
 #include "My_Camera.h"
+#include "Checkpoint.h"
 
 using namespace std;
 using namespace Zeni;
@@ -50,6 +51,7 @@ private:
         WIN
     };
     
+    static Vector3f gravity;
     static float look_sensitivity;
     static float roll_sensitivity;
     static float thrust_sensitivity;
@@ -59,21 +61,20 @@ private:
     static float thrust_range;
     
     list<Game_Object*> objects;
+    list<Checkpoint*> checkpoints;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;
     float thrust_amount;
+    float processing_time;
     float time_remaining;
     
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;
-    Crate m_obstacle;
+    Checkpoint m_obstacle;
     Player m_player;
     Environment m_ground;
-    
-    void partial_step(const float &time_step, const Vector3f &velocity);
-    
 
 };
 

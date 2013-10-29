@@ -14,6 +14,7 @@
 using namespace std;
 using namespace Zeni;
 
+Vector3f Play_State::gravity = Vector3f(0,0,-50);
 float Play_State::look_sensitivity = 30000.0f;
 float Play_State::roll_sensitivity = 11000.0f;
 float Play_State::thrust_sensitivity = 30.0f;
@@ -24,7 +25,7 @@ float Play_State::thrust_range = 250.0f;
 
 Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
-                            m_obstacle(Point3f(3500.0f, 3500.0f, 1700.0f),
+                            m_obstacle(30.0f, Point3f(3500.0f, 3500.0f, 1700.0f),
                                        Vector3f(300.0f, 300.0f, 300.0f)),
                             m_player(Point3f(100.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
@@ -36,13 +37,14 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                             m_ground(),
         m_game_state(CUT_SCENE),
         objects(),
+        checkpoints(),
         x(0),
         y(0),
         w(0),
         h(0),
         roll(0)
     {
-    
+        processing_time = 0.0f;
         time_remaining = 30.0f;
         
         Crate* b1 = new Crate(Point3f(100, 500, 0), Vector3f(2000, 2000, 6000));
@@ -57,7 +59,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
         
-        objects.push_back(&m_obstacle);
+        checkpoints.push_back(&m_obstacle);
         objects.push_back(b1);
         objects.push_back(b2);
         objects.push_back(b3);
@@ -105,10 +107,15 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
+        
         m_crate.render();
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
             (*it)->render();
+        }
+        std::list<Checkpoint*>::iterator check_it;
+        for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
+            (*check_it)->render();
         }
         //m_ground.groundRender(m_player.get_position());
         m_player.render();
@@ -121,6 +128,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         Zeni::String hud(stream.str());
         get_Fonts()["title"].render_text(hud, Point2f(), Color());
         
+        //get_Fonts()["title"].render_text("fps: " +  ulltoa(get_Game().get_fps()), Point2f(30, get_Window().get_height() / 2), Color());
+
         switch (m_game_state) {
             case WIN:
                 get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() / 2), Color());
@@ -147,11 +156,11 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     }
 
     void Play_State::perform_logic() {
-       // cout << m_ground.
         //Update clocks
         const Time_HQ current_time = get_Timer_HQ().get_time();
-        float processing_time = float(current_time.get_seconds_since(time_passed));
+        processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
+
         
         switch (m_game_state) {
             case CUT_SCENE: {
@@ -211,7 +220,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             m_game_state = LOSE;
             m_camera.track(&m_player);
         }
-
     }
 
     void Play_State::physics_loop(float processing_time) {
@@ -222,20 +230,21 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             processing_time = 0.1f;
         }
         
+        m_player.set_velocity(velocity);
+        
         /** Physics processing loop**/
-        for(float time_step = 0.05f; processing_time > 0.0f; processing_time -= time_step) {
+        for(float time_step = 0.0005f; processing_time > 0.0f;) {
             
             if(time_step > processing_time) {
                 time_step = processing_time;
             }
             
             /** Try to move on each axis **/
-            partial_step(time_step, velocity.get_i());
-            partial_step(time_step, velocity.get_j());
-            partial_step(time_step, velocity.get_k());
-            m_camera.step(time_step);
+            m_player.step(time_step);
+            m_camera.step(time_step, velocity.get_k());
+            
+            processing_time -= time_step;
         }
-
     }
 
     void Play_State::rotate_player() {
@@ -272,21 +281,23 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
 
     void Play_State::check_collisions() {
         if(m_player.is_crashing(objects)){
-            //            m_game_state = LOSE;
-            //            Play_State* newplay = new Play_State();
-            //            get_Game().push_state(newplay);
             m_game_state = CRASH;
             ofstream myfile;
             myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
             myfile << time_remaining << "\n";
             myfile.close();
         }
+        
+        std::list<Checkpoint*>::iterator check_it;
+        for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
+            if (m_player.is_crashing((*check_it)) && (*check_it)->get_is_active()) {
+                time_remaining += (*check_it)->get_time_value();
+                (*check_it)->set_is_active(false);
+                cout << "CHECKPOINT!!!!" << endl;
+            }
+        }
     }
 
-    void Play_State::partial_step(const float &time_step, const Vector3f &velocity) {
-        m_player.set_velocity(velocity);
-        m_player.step(time_step);
-    }
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {
         if(confidence > 0.5f)
@@ -329,11 +340,11 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 break;
                 
             case 6: //D up
-                m_camera.chase(&m_player);
+                m_camera.set_horizon_lock();
                 break;
                 
             case 10://D down
-                m_camera.detach_camera();
+                m_camera.set_rolling();
                 break;
                 
             case 12:

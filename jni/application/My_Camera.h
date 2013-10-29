@@ -28,6 +28,8 @@ public:
     bool get_is_attached();
     void track(Game_Object* obj);
     void chase(Game_Object* obj);
+    void set_horizon_lock();
+    void set_rolling();
     
     // Adjusting position and orientation of camera
     void set_position(const Zeni::Point3f &position);
@@ -42,7 +44,7 @@ public:
     
     const Zeni::Collision::Capsule & get_body() const {return m_body;}
     
-    void step(const float &time_step);
+    void step(const float &time_step, Vector3f vel);
     
 private:
     enum CAMERA_STATE {
@@ -51,6 +53,12 @@ private:
         CHASING
     };
     
+    enum CHASE_TYPE {
+        HORIZON_LOCKED,
+        ROLLING
+    };
+    
+    int m_chase_type;
     int m_camera_state;
     Game_Object* m_attached_object;
     Zeni::Camera m_camera;
@@ -61,7 +69,7 @@ private:
     Zeni::Vector3f m_velocity;
     
     void create_body();
-    void chase_attached();
+    void chase_attached(Vector3f vel);
     void track_attached();
 };
 

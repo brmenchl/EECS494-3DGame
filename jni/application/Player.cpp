@@ -116,12 +116,14 @@ bool Player::is_crashing(list<Game_Object*> &objects){
     return false;
 }
 
+bool Player::is_crashing(Game_Object *object){
+    if(Player::get_player_body().first.intersects(object->get_body()) || Player::get_player_body().second.intersects(object->get_body())){
+        return true;
+    }
+    return false;
+}
+
 void Player::create_body() {
-    //m_body.first = Capsule(get_front(), get_back(), get_radius());
-//    m_body.second = Parallelepiped(get_position(),
-//                             m_rotation * WING_X * m_scale.x,
-//                             m_rotation * WING_SPAN * 2 * m_scale.y,
-//                             m_rotation * WING_Z * m_scale.k);
     m_body.second = Parallelepiped(get_wing_corner(),
                                    m_rotation * -WING_SPAN * m_scale.y,
                                    m_rotation * WING_X * m_scale.x,

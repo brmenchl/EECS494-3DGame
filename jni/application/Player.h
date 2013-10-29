@@ -33,6 +33,7 @@ public:
     
     const std::pair<Zeni::Collision::Capsule, Zeni::Collision::Parallelepiped> & get_player_body() const;
     bool is_crashing(std::list<Game_Object*> &objects);
+    bool is_crashing(Game_Object* checkpoint);
 private:
     static Vector3f WING_Z;
     static Vector3f WING_X;

@@ -21,7 +21,8 @@ My_Camera::My_Camera(const Camera &camera_,
 m_end_point_b(end_point_b_),
 m_radius(radius_),
 m_camera_state(FREE),
-follow_distance(25)
+m_chase_type(HORIZON_LOCKED),
+follow_distance(10)
 {
     m_attached_object = NULL;
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
@@ -41,6 +42,14 @@ void My_Camera::chase(Game_Object* obj) {
 void My_Camera::detach_camera() {
     m_attached_object = NULL;
     m_camera_state = FREE;
+}
+
+void My_Camera::set_horizon_lock() {
+    m_chase_type = HORIZON_LOCKED;
+}
+
+void My_Camera::set_rolling() {
+    m_chase_type = ROLLING;
 }
 
 bool My_Camera::get_is_attached() {
@@ -71,18 +80,18 @@ void My_Camera::turn_left_xy(const float &theta) {
 }
 
 void My_Camera::increase_follow_distance() {
-    if (follow_distance < 50) {
-        follow_distance += 25;
+    if (follow_distance < 20) {
+        follow_distance += 10;
     }
 }
 
 void My_Camera::decrease_follow_distance() {
-    if (follow_distance > 25) {
-        follow_distance -= 25;
+    if (follow_distance > 10) {
+        follow_distance -= 10;
     }
 }
 
-void My_Camera::step(const float &time_step) {
+void My_Camera::step(const float &time_step, Vector3f vel) {
     
     switch (m_camera_state) {
         case FREE:
@@ -94,7 +103,7 @@ void My_Camera::step(const float &time_step) {
             break;
             
         case CHASING:
-            chase_attached();
+            chase_attached(vel);
             break;
     }
 
@@ -113,7 +122,7 @@ void My_Camera::create_body() {
     sr.set_listener_velocity(m_velocity);
 }
 
-void My_Camera::chase_attached() {
+void My_Camera::chase_attached(Vector3f vel) {
     Vector3f move_vec;
     Point3f strict_new_pos, cam_cur_pos, next_pos;
     cam_cur_pos = m_camera.position;
@@ -123,10 +132,14 @@ void My_Camera::chase_attached() {
     
     move_vec = Vector3f(strict_new_pos.x - cam_cur_pos.x, strict_new_pos.y - cam_cur_pos.y, strict_new_pos.z - cam_cur_pos.z);
     
-    next_pos = cam_cur_pos + move_vec * 0.03f;
+    next_pos = cam_cur_pos + move_vec * 0.002f;
     
     m_camera.position = next_pos;
-    m_camera.look_at(m_attached_object->get_position());
+    m_camera.look_at(m_attached_object->get_position() + m_attached_object->get_forward_vec() * vel.magnitude());
+
+    if (m_chase_type == ROLLING) {
+        m_camera.orientation = m_attached_object->get_rotation();
+    }
 }
 
 void My_Camera::track_attached() {
