@@ -25,27 +25,11 @@ class Crate : public Game_Object {
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
 
   private:
-    //Member variables
-    //Vector3f m_velocity;
-      
-    //void create_body();
 
-    // Level 1
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
 
     Zeni::Sound_Source * m_source;
-
-    // Level 2
-//    Zeni::Point3f m_corner;
-//    Zeni::Vector3f m_scale;
-//    Zeni::Quaternion m_rotation;
-
-    // Level 3
-    //Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
-
-    // Level 4
-    // A stationary Crate has no controls
   };
 
 #endif

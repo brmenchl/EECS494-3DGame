@@ -27,11 +27,12 @@ public:
     virtual void collide() = 0;
     void step(const float &time_step);
     void set_velocity(const Vector3f &velocity_) {m_velocity = velocity_;}
+    Vector3f get_velocity() { return m_velocity; }
     Point3f get_position() {return m_position;}
     Vector3f get_scale() {return m_scale;}
     Quaternion get_rotation() {return m_rotation;}
     void rotate(const Quaternion &rot_) { m_rotation *= rot_; }
-    virtual const Collision::Parallelepiped & get_body() const {return m_body;}
+    const Collision::Parallelepiped & get_body() const {return m_body;}
     Vector3f get_forward_vec();
     Vector3f get_up_vec();
     Vector3f get_left_vec();

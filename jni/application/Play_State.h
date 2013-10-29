@@ -26,6 +26,7 @@ class Play_State : public Gamestate_II {
     
 public:
     Play_State();
+    void set_actions();
     
     void on_push();
     void on_pop();
@@ -41,6 +42,8 @@ public:
     void physics_loop(float processing_time);
     void rotate_player();
     void check_collisions();
+    void explode_player();
+    void invert_if_even(int &x);
     
 private:
     enum GAME_STATE {
@@ -62,6 +65,7 @@ private:
     
     list<Game_Object*> objects;
     list<Checkpoint*> checkpoints;
+    list<Game_Object*> debris;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;

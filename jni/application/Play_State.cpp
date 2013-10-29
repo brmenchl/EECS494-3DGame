@@ -14,16 +14,16 @@
 using namespace std;
 using namespace Zeni;
 
-Vector3f Play_State::gravity = Vector3f(0,0,-50);
+Vector3f Play_State::gravity = Vector3f(0,0,-0.1);
 float Play_State::look_sensitivity = 30000.0f;
 float Play_State::roll_sensitivity = 11000.0f;
 float Play_State::thrust_sensitivity = 30.0f;
 float Play_State::yaw_modifier = 5.0f;
-float Play_State::base_thrust = 750.0f;
+float Play_State::base_thrust = 850.0f;
 float Play_State::thrust_delta = 25.0f;
 float Play_State::thrust_range = 250.0f;
 
-Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
+Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
                                    Vector3f(9000.0f, 9000.0f, 9000.0f)),
                             m_obstacle(30.0f, Point3f(3500.0f, 3500.0f, 1700.0f),
                                        Vector3f(300.0f, 300.0f, 300.0f)),
@@ -38,6 +38,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         m_game_state(CUT_SCENE),
         objects(),
         checkpoints(),
+        debris(),
         x(0),
         y(0),
         w(0),
@@ -74,20 +75,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
 
         set_pausable(true);
         
-        set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_BACK), 1);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_LEFTX /* x-axis */), 2);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_LEFTY /* y-axis */), 3);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTX /* x-rotation */), 4);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
-        set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_B), 13);
+        set_actions();
 
         m_camera.track(&m_player);
     }
@@ -118,7 +106,16 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             (*check_it)->render();
         }
         //m_ground.groundRender(m_player.get_position());
-        m_player.render();
+        
+        if (m_game_state == CRASH) {
+            m_player.Game_Object::set_velocity(Vector3f(0,0,0));
+            std::list<Game_Object*>::iterator it;
+            for(it = debris.begin(); it != debris.end(); it++){
+                (*it)->render();
+            }
+        } else {
+            m_player.render();
+        }
         
         vr.set_2d();
         ostringstream stream;
@@ -128,8 +125,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         Zeni::String hud(stream.str());
         get_Fonts()["title"].render_text(hud, Point2f(), Color());
         
-        //get_Fonts()["title"].render_text("fps: " +  ulltoa(get_Game().get_fps()), Point2f(30, get_Window().get_height() / 2), Color());
-
         switch (m_game_state) {
             case WIN:
                 get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() / 2), Color());
@@ -160,6 +155,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
         const Time_HQ current_time = get_Timer_HQ().get_time();
         processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
+        
+        
+        if (m_game_state == CUT_SCENE && time_remaining < 28.0) {
+            m_camera.chase(&m_player);
+            m_game_state = PLAY;
+        }
 
         
         switch (m_game_state) {
@@ -171,10 +172,10 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 
             case PLAY: {
                 update_time(processing_time);
+                rotate_player();
                 physics_loop(processing_time);
                 check_collisions();
                 check_lose_condition();
-                rotate_player();
                 break;
             }
                 
@@ -197,14 +198,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
             }
         }
         
-        
-        /** Just testing playing around with game states here! */
-        if (time_remaining < 28.0 && time_remaining > 20.0) {
-            m_camera.chase(&m_player);
-            m_game_state = PLAY;
-        }
-        /** End game states tests */
-        
     }
 
     void Play_State::update_time(float processing_time) {
@@ -225,6 +218,11 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     void Play_State::physics_loop(float processing_time) {
         Vector3f velocity = get_player_velocity();
         
+        if (m_game_state == CRASH) {
+            velocity = gravity;
+        }
+        
+        
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
             processing_time = 0.1f;
@@ -239,10 +237,14 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 time_step = processing_time;
             }
             
-            /** Try to move on each axis **/
+            /** Move each object which needs to **/
+            std::list<Game_Object*>::iterator it;
+            for(it = debris.begin(); it != debris.end(); it++){
+                (*it)->set_velocity((*it)->get_velocity() + gravity);
+                (*it)->step(time_step);
+            }
             m_player.step(time_step);
             m_camera.step(time_step, velocity.get_k());
-            
             processing_time -= time_step;
         }
     }
@@ -282,10 +284,11 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
     void Play_State::check_collisions() {
         if(m_player.is_crashing(objects)){
             m_game_state = CRASH;
-            ofstream myfile;
-            myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
-            myfile << time_remaining << "\n";
-            myfile.close();
+            explode_player();
+//            ofstream myfile;
+//            myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
+//            myfile << time_remaining << "\n";
+//            myfile.close();
         }
         
         std::list<Checkpoint*>::iterator check_it;
@@ -295,6 +298,30 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 (*check_it)->set_is_active(false);
                 cout << "CHECKPOINT!!!!" << endl;
             }
+        }
+    }
+
+    /** Generates a bunch of tiny crates that shoot off in random directions */
+    void Play_State::explode_player() {
+        for (int i = 0; i < 75; i++) {
+            int x, y, z;
+            x = rand() % 100;
+            y = rand() % 100;
+            z = rand() % 100;
+            invert_if_even(x);
+            invert_if_even(y);
+            invert_if_even(z);
+            
+            Crate* c = new Crate(m_player.get_position(), Vector3f(5, 5, 5));
+            c->set_velocity(Vector3f(x, y, z));
+            debris.push_back(c);
+        }
+        m_camera.track(debris.front());
+    }
+
+    void Play_State::invert_if_even(int &x) {
+        if ((x % 2) == 0) {
+            x *= -1;
         }
     }
 
@@ -388,3 +415,20 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, 0.0f),
                 break;
         }
     }
+
+void Play_State::set_actions() {
+    set_action(Zeni_Input_ID(SDL_KEYDOWN, SDLK_ESCAPE), 1);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_BACK), 1);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_LEFTX /* x-axis */), 2);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_LEFTY /* y-axis */), 3);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTX /* x-rotation */), 4);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_B), 13);
+}

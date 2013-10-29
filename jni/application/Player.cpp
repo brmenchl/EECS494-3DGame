@@ -124,6 +124,7 @@ bool Player::is_crashing(Game_Object *object){
 }
 
 void Player::create_body() {
+    m_body.first = Capsule(get_front(), get_back(), get_radius());
     m_body.second = Parallelepiped(get_wing_corner(),
                                    m_rotation * -WING_SPAN * m_scale.y,
                                    m_rotation * WING_X * m_scale.x,
