@@ -48,20 +48,29 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
         processing_time = 0.0f;
         time_remaining = 30.0f;
         
-        Crate* b1 = new Crate(Point3f(100, 500, 0), Vector3f(2000, 2000, 6000));
+        Crate* b1 = new Crate(Point3f(100, 500, 500), Vector3f(2000, 2000, 6000));
+        Crate* sup1 = new Crate(Point3f(100, 500, 0), Vector3f(100, 100, 500));
+        Crate* sup2 = new Crate(Point3f(100, 2400, 0), Vector3f(100, 100, 500));
+        Crate* sup3 = new Crate(Point3f(1900, 500, 0), Vector3f(100, 100, 500));
+        Crate* sup4 = new Crate(Point3f(1900, 2400, 0), Vector3f(100, 100, 500));
         Crate* b2 = new Crate(Point3f(2500, 500, 0), Vector3f(2000, 2000, 3000));
         Crate* b3 = new Crate(Point3f(4000, 4000, 0), Vector3f(100, 100, 900));
         Crate* b4 = new Crate(Point3f(4000, 4500, 0), Vector3f(100, 100, 1500));
         Crate* b5 = new Crate(Point3f(4000, 5000, 0), Vector3f(100, 100, 900));
 //        Crate* b6 = new Crate(Point3f(1600, 500, 0), Vector3f(400, 200, 3000));
 //        Crate* b7 = new Crate(Point3f(2100, 100, 0), Vector3f(200, 600, 3000));
-        Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000));
+        Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000), Quaternion::Axis_Angle(Vector3f(0.0f, 1.0f, 0.0f), ::Zeni::Global::pi/12));
         Crate* b9 = new Crate(Point3f(6000, 7800, 0), Vector3f(1000, 1000, 5000));
         Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
         
         checkpoints.push_back(&m_obstacle);
+        objects.push_back(&m_crate);
         objects.push_back(b1);
+        objects.push_back(sup1);
+        objects.push_back(sup2);
+        objects.push_back(sup3);
+        objects.push_back(sup4);
         objects.push_back(b2);
         objects.push_back(b3);
         objects.push_back(b4);
@@ -172,6 +181,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
                 
             case PLAY: {
                 update_time(processing_time);
+                adjust_camera_fov();
                 rotate_player();
                 physics_loop(processing_time);
                 check_collisions();
@@ -324,7 +334,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
             x *= -1;
         }
     }
-
 
     void Play_State::on_event(const Zeni_Input_ID &id, const float &confidence, const int &action) {
         if(confidence > 0.5f)
