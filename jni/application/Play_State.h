@@ -76,7 +76,6 @@ private:
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Crate m_crate;
-    Checkpoint m_obstacle;
     Player m_player;
     Environment m_ground;
 

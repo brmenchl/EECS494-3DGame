@@ -36,11 +36,17 @@ public:
     bool get_is_active();
     void set_is_active(bool flag);
     float get_time_value();
-
+    void add_next_checkpoint(Checkpoint* next);
+    void activate_next_checkpoints();
+    void set_as_victory_checkpoint();
+    bool get_is_victory_checkpoint();
+    
 private:
     
+    std::list<Checkpoint*> next_checkpoints;
     float m_time_value;
     bool m_is_active;
+    bool m_is_victory_checkpoint;
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
     

@@ -21,8 +21,10 @@ Checkpoint::Checkpoint(float time_value_,
              const Quaternion &rotation_)
 : Game_Object(corner_, scale_, rotation_),
 m_source(new Sound_Source(get_Sounds()["collide"])),
-m_is_active(true),
-m_time_value(time_value_)
+m_is_active(false),
+m_is_victory_checkpoint(false),
+m_time_value(time_value_),
+next_checkpoints()
 {
     if(!m_instance_count)
         m_model = new Model("models/crate.3ds");
@@ -70,7 +72,10 @@ void Checkpoint::render() {
 }
 
 void Checkpoint::step(const float &time_step) {
-    m_position += time_step * m_velocity;
+    if (m_is_active) {
+        m_position += time_step * m_velocity;
+        m_rotation *= Quaternion(time_step, 0, 0);
+    }
     create_body();
 }
 
@@ -89,6 +94,26 @@ bool Checkpoint::get_is_active() {
 void Checkpoint::set_is_active(bool flag) {
     m_is_active = flag;
 }
+
+void Checkpoint::add_next_checkpoint(Checkpoint* next) {
+    next_checkpoints.push_back(next);
+}
+
+void Checkpoint::activate_next_checkpoints() {
+    std::list<Checkpoint*>::iterator check_it;
+    for(check_it = next_checkpoints.begin(); check_it != next_checkpoints.end(); check_it++){
+        (*check_it)->set_is_active(true);
+    }
+}
+
+void Checkpoint::set_as_victory_checkpoint() {
+    m_is_victory_checkpoint = true;
+}
+
+bool Checkpoint::get_is_victory_checkpoint() {
+    return m_is_victory_checkpoint;
+}
+
 
 Model * Checkpoint::m_model = 0;
 unsigned long Checkpoint::m_instance_count = 0lu;
