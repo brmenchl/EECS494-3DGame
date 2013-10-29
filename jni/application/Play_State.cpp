@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <String.h>
+#include <algorithm>
 using namespace std;
 using namespace Zeni;
 
@@ -36,6 +37,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         m_game_state(CUT_SCENE),
         objects(),
         checkpoints(),
+        high_scores(),
         debris(),
         x(0),
         y(0),
@@ -99,6 +101,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         set_actions();
 
         m_camera.track(&m_player);
+        
     }
 
     void Play_State::on_push() {
@@ -150,23 +153,32 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         
         switch (m_game_state) {
             case WIN: {
+                Font &score = get_Fonts()["score"];
+                get_Fonts()["score"].render_text("Best Times:", Point2f(get_Window().get_width() - 200, 10), Color());
+
+                for (int i = 0; i < high_scores.size() && i < 5; i++) {
+                    get_Fonts()["score"].render_text(itoa(i+1) + ". " + ftoa(high_scores[i]), Point2f(get_Window().get_width() - 200, 10 + (i+1) * score.get_text_height() * 1.2), Color());
+
+                }
+                
+                
                 Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() / 2), Color());
-                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() / 2 + f.get_text_height()), Color());
+                get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case LOSE: {
                 Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() / 2), Color());
-                get_Fonts()["title"].render_text("Press B to retry", Point2f(30, get_Window().get_height() / 2 + f.get_text_height()), Color());
+                get_Fonts()["title"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case CRASH: {
                 Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You crashed!", Point2f(30, get_Window().get_height() / 2), Color());
-                get_Fonts()["title"].render_text("Press B to retry", Point2f(30, get_Window().get_height() / 2 + f.get_text_height()), Color());
+                get_Fonts()["title"].render_text("You crashed!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
@@ -327,10 +339,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 (*check_it)->activate_next_checkpoints();
                 if ((*check_it)->get_is_victory_checkpoint()) {
                     m_game_state = WIN;
-                    ofstream myfile;
-                    myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
-                    myfile << time_remaining << "\n";
-                    myfile.close();
+                    add_score();
+                    read_high_scores();
                 }
             }
         }
@@ -465,4 +475,34 @@ void Play_State::set_actions() {
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER /* roll */), 9);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_B), 13);
+}
+
+void Play_State::add_score() {
+    ofstream myfile;
+    myfile.open (get_File_Ops().get_appdata_path().std_str() + "scores.txt", ios::app);
+    myfile << time_remaining << "\n";
+    myfile.close();
+}
+
+void Play_State::read_high_scores() {
+    //Open file
+    std::ifstream inFile;
+    inFile.open(get_File_Ops().get_appdata_path().std_str() + "scores.txt");
+    float input;
+    
+    while(inFile >> input)
+    {
+        high_scores.push_back(input);
+    }
+    
+    //Close file
+    inFile.close();
+    std::sort(high_scores.begin(), high_scores.end(), Play_State::score_comp);
+    for (int i = 0; i < high_scores.size(); i++) {
+        cout << high_scores[i] << endl;
+    }
+}
+
+bool Play_State::score_comp(const float score1, const float score2) {
+    return score1 > score2;
 }

@@ -49,4 +49,12 @@ Only TrueType fonts are supported.
       <height>600</height>
     </virtual_screen>
   </title>
+  <score>
+      <filepath>fonts/FORGOTTE.TTF</filepath>
+      <height>24</height>
+      <virtual_screen>
+          <width>800</width>
+          <height>600</height>
+      </virtual_screen>
+  </score>
 </Fonts>

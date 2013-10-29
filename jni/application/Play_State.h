@@ -44,6 +44,7 @@ public:
     void check_collisions();
     void explode_player();
     void invert_if_even(int &x);
+    void read_high_scores();
     
 private:
     enum GAME_STATE {
@@ -63,6 +64,7 @@ private:
     static float thrust_delta;
     static float thrust_range;
     
+    vector<float> high_scores;
     list<Game_Object*> objects;
     list<Checkpoint*> checkpoints;
     list<Game_Object*> debris;
@@ -79,6 +81,8 @@ private:
     Player m_player;
     Environment m_ground;
 
+    void add_score();
+    static bool score_comp(const float score1, const float score2);
 };
 
 #endif /* defined(__game__Play_State__) */
