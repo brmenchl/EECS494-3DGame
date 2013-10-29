@@ -133,6 +133,10 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         }
         //m_ground.groundRender(m_player.get_position());
         
+        get_Video().set_lighting(true);
+        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
+        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
+        
         if (m_game_state == CRASH) {
             m_player.Game_Object::set_velocity(Vector3f(0,0,0));
             std::list<Game_Object*>::iterator it;
@@ -142,6 +146,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         } else {
             m_player.render();
         }
+        
+        vr.set_lighting(false);
         
         vr.set_2d();
         ostringstream stream;
