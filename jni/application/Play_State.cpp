@@ -125,6 +125,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 //        get_Video().set_lighting(true);
 //        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
 //        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
+
+        m_skybox.boxRender(m_player.get_position());
         
 //        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
 //        light.set_light_type(LIGHT_SPOT);
