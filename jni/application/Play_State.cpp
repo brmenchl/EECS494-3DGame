@@ -36,6 +36,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                                      11.0f),
                             m_fog(Color(1,1,1,1),1.0f, FOG_LINEAR, 5000.0f, 7000.0f),
                             m_ground(),
+                            m_arrow(),
                             m_skybox(),
                             m_game_state(CUT_SCENE),
         objects(),
@@ -133,7 +134,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         m_skybox.boxRender(m_camera.get_camera().position);
 
         vr.set_zwrite(true);
-        vr.set_Fog(m_fog);
+        //vr.set_Fog(m_fog);
         get_Video().set_lighting(true);
         get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
         get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
@@ -145,7 +146,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 //        light.set_spot_theta(Zeni::Global::pi / 4);
         //get_Video().set_Light(0, light);
 
-        m_crate.render();
+       // m_crate.render();
         
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
@@ -172,6 +173,10 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         }
         
         vr.set_lighting(false);
+        
+        //vr.set_zwrite(false);
+        m_arrow.arrowRender(m_camera);
+       // vr.set_zwrite(true);
         
         vr.set_2d();
         
