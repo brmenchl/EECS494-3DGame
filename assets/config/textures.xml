@@ -50,23 +50,23 @@ The following things are unsupported:
     </P47_TEX.PNG>
     <FRONT.PNG>
       <filepath>textures/front.png</filepath>
-      <tile>0</tile>
+      <tile>1</tile>
     </FRONT.PNG>
     <RIGHT.PNG>
       <filepath>textures/right.png</filepath>
-      <tile>0</tile>
+      <tile>1</tile>
     </RIGHT.PNG>
     <LEFT.PNG>
       <filepath>textures/left.png</filepath>
-      <tile>0</tile>
+      <tile>1</tile>
     </LEFT.PNG>
     <TOP.PNG>
       <filepath>textures/top.png</filepath>
-      <tile>0</tile>
+      <tile>1</tile>
     </TOP.PNG>
     <BACK.PNG>
       <filepath>textures/back.png</filepath>
-      <tile>0</tile>
+      <tile>1</tile>
     </BACK.PNG>
   <!--
   <one>
