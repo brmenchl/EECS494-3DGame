@@ -12,6 +12,7 @@
 #include <zenilib.h>
 #include "Game_Object.h"
 #include "My_Camera.h"
+#include "Checkpoint.h"
 
 using namespace Zeni;
 
@@ -22,7 +23,7 @@ public:
            const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     ~Arrow();
     void render(){};
-    void arrowRender(My_Camera &m_cam);
+    void arrowRender(My_Camera &m_cam, Checkpoint* checkpoint);
     void collide(){};
 private:
     static unsigned long m_instance_count;

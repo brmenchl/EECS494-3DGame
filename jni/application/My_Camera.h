@@ -25,6 +25,8 @@ public:
     Zeni::Camera & get_camera() {return m_camera;}
     
     void detach_camera();
+    void set_focus_object(Game_Object* obj);
+    void unset_focus_object();
     bool get_is_attached();
     void track(Game_Object* obj);
     void chase(Game_Object* obj);
@@ -60,7 +62,9 @@ private:
     
     int m_chase_type;
     int m_camera_state;
+    float m_focus_length;
     Game_Object* m_attached_object;
+    Game_Object* m_focus_object;
     Zeni::Camera m_camera;
     float follow_distance;
     Zeni::Vector3f m_end_point_b;

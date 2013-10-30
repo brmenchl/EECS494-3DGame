@@ -75,6 +75,7 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
         checkpoints.push_back(check3);
         checkpoints.push_back(check4);
 
+        next_checkpoints.push_back(check1);
         
         /*Buildings*/
         Residence* r1 = new Residence(Point3f(4000, 7000, 0));
@@ -180,7 +181,10 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
         vr.set_lighting(false);
         
         //vr.set_zwrite(false);
-        m_arrow.arrowRender(m_camera);
+//        std::list<Checkpoint*>::iterator next_check;
+//        for(next_check = next_checkpoints.begin(); next_check != next_checkpoints.end(); next_check++){
+//            m_arrow.arrowRender(m_camera, (*next_check));
+//        }
        // vr.set_zwrite(true);
         
         vr.set_2d();
@@ -468,8 +472,22 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
                 m_camera.set_rolling();
                 break;
                 
-            case 12:
-                m_camera.track(&m_player);
+            case 12: {//D Left down
+                
+                if (m_game_state != PLAY) {
+                    break;
+                }
+                
+                if (confidence) {
+                    m_camera.set_focus_object(next_checkpoints.front());
+                } else {
+                    m_camera.unset_focus_object();
+                }
+                break;
+            }
+                
+            case 14: //D Left up
+                m_camera.unset_focus_object();
                 break;
                 
             case 7: //Trigger Right - Thrust
@@ -519,7 +537,8 @@ void Play_State::set_actions() {
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
-//    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_A /* z-axis */), 12);
+    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONUP , SDL_CONTROLLER_BUTTON_A /* z-axis */), 14);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
