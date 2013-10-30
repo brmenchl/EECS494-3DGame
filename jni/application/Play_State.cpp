@@ -27,13 +27,14 @@ float Play_State::thrust_range = 250.0f;
 
 Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                                    Vector3f(9000.0f, 9000.0f, 1.0f)),
-                            m_player(Point3f(100.0f, 8000.0f, 150.0f),
+                            m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
                             m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
                                             Quaternion(),
                                             1.0f, 10000.0f),
                                      Vector3f(0.0f, 0.0f, -39.0f),
                                      11.0f),
+                            m_fog(Color(1,1,1,1),1.0f, FOG_LINEAR, 5000.0f, 7000.0f),
                             m_ground(),
                             m_skybox(),
                             m_game_state(CUT_SCENE),
@@ -130,9 +131,13 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 //        get_Video().set_lighting(true);
 //        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
 //        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
+        vr.set_zwrite(false);
 
-        m_skybox.boxRender(m_player.get_position());
-        
+        m_skybox.boxRender(m_camera.get_camera().position);
+//
+        vr.set_zwrite(true);
+        vr.set_Fog(m_fog);
+
 //        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
 //        light.set_light_type(LIGHT_SPOT);
 //        light.set_spot_phi(Zeni::Global::pi / 6);
@@ -152,11 +157,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             (*check_it)->render();
         }
         
-//        vr.set_zwrite(false);
-//        
-//        m_skybox.boxRender(m_camera.get_camera().position);
-//        
-//        vr.set_zwrite(true);
+
         //m_ground.groundRender(m_player.get_position());
         
         if (m_game_state == CRASH) {

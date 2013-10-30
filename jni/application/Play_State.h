@@ -84,6 +84,7 @@ private:
     Player m_player;
     Environment m_ground;
     Skybox m_skybox;
+    Fog m_fog;
     void add_score();
     static bool score_comp(const float score1, const float score2);
 };
