@@ -16,6 +16,7 @@
 #include "Environment.h"
 #include "My_Camera.h"
 #include "Checkpoint.h"
+#include "Skybox.h"
 
 using namespace std;
 using namespace Zeni;
@@ -79,7 +80,7 @@ private:
     Checkpoint m_obstacle;
     Player m_player;
     Environment m_ground;
-
+    Skybox m_skybox;
 };
 
 #endif /* defined(__game__Play_State__) */

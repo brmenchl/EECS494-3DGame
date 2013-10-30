@@ -35,7 +35,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
                                      Vector3f(0.0f, 0.0f, -39.0f),
                                      11.0f),
                             m_ground(),
-        m_game_state(CUT_SCENE),
+                            m_skybox(),
+                            m_game_state(CUT_SCENE),
         objects(),
         checkpoints(),
         debris(),
@@ -95,7 +96,11 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
+        vr.set_zwrite(false);
         
+        m_skybox.boxRender(m_camera.get_camera().position);
+        
+        vr.set_zwrite(true);
         m_crate.render();
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
@@ -210,8 +215,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -9000.0f),
 
     void Play_State::check_lose_condition() {
         if (time_remaining == 0) {
-            m_game_state = LOSE;
-            m_camera.track(&m_player);
+           // m_game_state = LOSE;
+           // m_camera.track(&m_player);
         }
     }
 
