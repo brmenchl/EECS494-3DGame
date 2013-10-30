@@ -22,7 +22,7 @@ public:
            const Zeni::Vector3f &end_point_b_,
            const float radius_);
     
-    const Zeni::Camera & get_camera() const {return m_camera;}
+    Zeni::Camera & get_camera() {return m_camera;}
     
     void detach_camera();
     bool get_is_attached();
