@@ -85,7 +85,7 @@ The following things are unsupported:
         <tile>1</tile>
     </ARROW_ME.PNG>
     <BUILDING.PNG>
-        <filepath>textures/buidlingwalltex.png</filepath>
+        <filepath>textures/buildingwalltex.png</filepath>
         <tile>1</tile>
     </BUILDING.PNG>
     <CEMENT.PNG>
