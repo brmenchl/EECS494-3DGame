@@ -79,13 +79,13 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         next_checkpoints.push_back(check1);
         
         /*Ground*/
-        Crate* g1 = new Crate(Point3f(0, 0, 0), Vector3f(90000, 90000, 1));
-//        Crate* g2 = new Crate(Point3f(0, 0, 0), Vector3f(2000, 2000, 1));
-//        Crate* g3;
-//        Crate* g4;
-//        Crate* g5;
-//        Crate* g6;
-//        Crate* g7;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                Crate* c = new Crate(Point3f(i * 2500, j * 2500, 0), Vector3f(2500, 2500, 1));
+                objects.push_back(c);
+            }
+        }
+
         
         /*Buildings*/
         Residence* r1 = new Residence(Point3f(4100, 7000, 0));
@@ -106,7 +106,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         objects.push_back(r1);
         objects.push_back(r2);
-        objects.push_back(g1);
         objects.push_back(b1);
         objects.push_back(sup1);
         objects.push_back(sup2);
