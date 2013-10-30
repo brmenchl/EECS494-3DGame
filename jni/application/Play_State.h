@@ -81,13 +81,9 @@ private:
     Crate m_crate;
     Player m_player;
     Environment m_ground;
-<<<<<<< HEAD
     Skybox m_skybox;
-=======
-
     void add_score();
     static bool score_comp(const float score1, const float score2);
->>>>>>> 87d5cdeece6a02b6058039e91d41ed56a6c8b9d9
 };
 
 #endif /* defined(__game__Play_State__) */
