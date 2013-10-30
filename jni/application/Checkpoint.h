@@ -29,7 +29,7 @@ public:
     void step(const float &time_step);
     void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
     Point3f get_position() {return m_position;}
-    
+    Collision::Sphere & get_checkpoint_body() { return m_body; }
     void collide();
     
     bool get_is_active();
@@ -49,9 +49,10 @@ private:
     bool m_is_victory_checkpoint;
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
+    Collision::Sphere m_body;
     
     Zeni::Sound_Source * m_source;
-
+    void create_body();
 };
 
 #endif /* defined(__game__Checkpoint__) */

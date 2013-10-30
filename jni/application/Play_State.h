@@ -75,6 +75,8 @@ private:
     float thrust_amount;
     float processing_time;
     float time_remaining;
+    float time_of_last_checkpoint;
+    float time_value_of_last_checkpoint;
     
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;

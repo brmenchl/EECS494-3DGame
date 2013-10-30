@@ -71,10 +71,9 @@ void Checkpoint::render() {
     m_model->set_translate(m_position);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
-    if(m_keyframe > 100)
-        m_keyframe = 0;
-    m_model->set_keyframe(m_keyframe);
-    std::cout<<m_keyframe<<std::endl;
+//    if(m_keyframe > 100)
+//        m_keyframe = 0;
+//    m_model->set_keyframe(m_keyframe);
     m_model->render();
 }
 
@@ -119,6 +118,10 @@ void Checkpoint::set_as_victory_checkpoint() {
 
 bool Checkpoint::get_is_victory_checkpoint() {
     return m_is_victory_checkpoint;
+}
+
+void Checkpoint::create_body() {
+    m_body = Sphere(m_position, 50.0f);
 }
 
 Model * Checkpoint::m_model = 0;

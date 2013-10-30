@@ -12,6 +12,7 @@
 #include <fstream>
 #include <String.h>
 #include <algorithm>
+#include "Debris.h"
 using namespace std;
 using namespace Zeni;
 
@@ -45,7 +46,9 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         w(0),
         h(0),
         roll(0),
-        processing_time(0)
+        processing_time(0),
+        time_of_last_checkpoint(MAXFLOAT),
+        time_value_of_last_checkpoint(0)
     {
         processing_time = 0.0f;
         time_remaining = 30.0f;
@@ -175,6 +178,10 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         stream << time_remaining;
         Zeni::String hud(stream.str());
         get_Fonts()["title"].render_text(hud, Point2f(), Color());
+        
+        if (time_of_last_checkpoint - time_remaining < 0 && m_game_state == PLAY) {
+            get_Fonts()["title"].render_text("Checkpoint! +" + itoa(time_value_of_last_checkpoint) + " seconds!", Point2f(0, get_Window().get_height() - 200), Color());
+        }
         
         switch (m_game_state) {
             case WIN: {
@@ -357,11 +364,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
-            if (m_player.is_crashing((*check_it)) && (*check_it)->get_is_active()) {
+            if (m_player.is_crossing_checkpoint((*check_it)) && (*check_it)->get_is_active()) {
+                time_value_of_last_checkpoint = (*check_it)->get_time_value();
+                time_of_last_checkpoint = time_remaining;
                 time_remaining += (*check_it)->get_time_value();
                 (*check_it)->set_is_active(false);
                 (*check_it)->activate_next_checkpoints();
-                cout << "CHECKPOINT" << endl;
                 if ((*check_it)->get_is_victory_checkpoint()) {
                     m_game_state = WIN;
                     add_score();
@@ -382,7 +390,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             invert_if_even(y);
             invert_if_even(z);
             
-            Crate* c = new Crate(m_player.get_position(), Vector3f(5, 5, 5));
+            Debris* c = new Debris(m_player.get_position(), Vector3f(1, 1, 1));
             c->set_velocity(Vector3f(x, y, z));
             debris.push_back(c);
         }
@@ -495,7 +503,7 @@ void Play_State::set_actions() {
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
-    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
+//    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_LEFT /* z-axis */), 12);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);

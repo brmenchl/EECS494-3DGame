@@ -9,6 +9,7 @@
 #include "Player.h"
 #include <zenilib.h>
 #include "Game_Object.h"
+#include "Checkpoint.h"
 
 
 using namespace Zeni;
@@ -116,8 +117,8 @@ bool Player::is_crashing(list<Game_Object*> &objects){
     return false;
 }
 
-bool Player::is_crashing(Game_Object *object){
-    if(Player::get_player_body().first.intersects(object->get_body()) || Player::get_player_body().second.intersects(object->get_body())){
+bool Player::is_crossing_checkpoint(Checkpoint *object){
+    if(Player::get_player_body().first.intersects(object->get_checkpoint_body()) || Player::get_player_body().second.intersects(object->get_checkpoint_body())){
         return true;
     }
     return false;
