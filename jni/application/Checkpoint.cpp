@@ -70,7 +70,11 @@ void Checkpoint::render() {
     m_model->set_translate(m_position);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
-    
+    //Active animation, not working :/
+//    if(m_model->get_keyframe() == m_model->get_keyframes()-1)
+  //      m_model->set_keyframe(0);
+ //   if(m_model->get_keyframe()==0)
+ //       m_model->set_keyframe(m_model->get_keyframe()+1.0f);
     m_model->render();
 }
 

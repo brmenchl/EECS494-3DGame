@@ -414,6 +414,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 break;
                 
             case 3: //Left Toggle Y
+
                 break;
                 
             case 4: //Right Toggle X - Steering
@@ -429,7 +430,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 if (abs(confidence) > 0.25f) {
                     h = -confidence * (get_Window().get_height());
                 } else {
-                    h = 0.0f;
+                   h = 0.0f;
                 }
                 break;
                 
