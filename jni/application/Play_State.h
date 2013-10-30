@@ -83,7 +83,6 @@ private:
     
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
-    Crate m_crate;
     Player m_player;
     Environment m_ground;
     Skybox m_skybox;
