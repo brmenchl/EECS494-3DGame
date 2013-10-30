@@ -121,9 +121,5 @@ bool Checkpoint::get_is_victory_checkpoint() {
     return m_is_victory_checkpoint;
 }
 
-void Checkpoint::create_body() {
-    m_body = Zeni::Collision::Sphere(get_position(), 500.0f);
-}
-
 Model * Checkpoint::m_model = 0;
 unsigned long Checkpoint::m_instance_count = 0lu;

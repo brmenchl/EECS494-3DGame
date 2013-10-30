@@ -22,8 +22,6 @@ class Crate : public Game_Object {
 
     void collide();
 
-    const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
-
   private:
 
     static Zeni::Model * m_model;

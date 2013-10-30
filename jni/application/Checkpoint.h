@@ -32,7 +32,6 @@ public:
     
     void collide();
     
-    const Zeni::Collision::Sphere & get_body() const {return m_body;}
     bool get_is_active();
     void set_is_active(bool flag);
     float get_time_value();
@@ -49,11 +48,9 @@ private:
     bool m_is_victory_checkpoint;
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
-    Zeni::Collision::Sphere m_body;
     
     Zeni::Sound_Source * m_source;
-    
-    void create_body();
+
 };
 
 #endif /* defined(__game__Checkpoint__) */
