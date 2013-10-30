@@ -122,7 +122,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         vr.set_3d(m_camera.get_camera());
         vr.set_zwrite(false);
         
-        m_skybox.boxRender(m_camera.get_camera().position);
+        m_skybox.boxRender(m_player.get_position());
         
         vr.set_zwrite(true);
         m_crate.render();

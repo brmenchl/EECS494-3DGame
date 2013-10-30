@@ -16,8 +16,7 @@ Skybox::Skybox(const Point3f &corner_,
                const Quaternion &rotation_)
                 : Game_Object(corner_, scale_, rotation_)
 {
-    
-    if(!m_instance_count){
+        std::cout << "creating\n";
         m_modelS1 = new Model("models/side1Sky.3ds");
         skybox.push_back(m_modelS1);
         m_modelS2 = new Model("models/side2Sky.3ds");
@@ -28,27 +27,25 @@ Skybox::Skybox(const Point3f &corner_,
         skybox.push_back(m_modelS4);
         m_modelTop = new Model("models/topSky.3ds");
         skybox.push_back(m_modelTop);
-        ++m_instance_count;
-    }
 }
 
 void Skybox::boxRender(Point3f player_pos) {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
     for(Model *m : skybox){
-        m->set_translate(Point3f(player_pos.x, player_pos.y, 0.0f));
+        m->set_translate(Point3f(player_pos.x, player_pos.y, player_pos.z-4500.0f));
         m->set_scale(m_scale);
         m->set_rotate(rotation.second, rotation.first);
         m->render();
+        std::cout<<"rendering\n";
+        std::cout<<skybox.size()<<std::endl;
     }
 }
 
 Skybox::~Skybox() {
-    
-    if(!--m_instance_count) {
-        for(Model *m : skybox){
-            delete m;
-            m = 0l;
-        }
+    std::cout<<"deleting\n";
+    for(Model *m : skybox){
+        delete m;
+        m = 0l;
     }
 }
 
