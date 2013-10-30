@@ -127,11 +127,16 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         
-//        get_Video().set_lighting(true);
-//        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
-//        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
+        vr.set_zwrite(false);
 
-        m_skybox.boxRender(m_player.get_position());
+        m_skybox.boxRender(m_camera.get_camera().position);
+
+        vr.set_zwrite(true);
+        
+        get_Video().set_lighting(true);
+        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
+        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
+
         
 //        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
 //        light.set_light_type(LIGHT_SPOT);
@@ -152,11 +157,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             (*check_it)->render();
         }
         
-//        vr.set_zwrite(false);
-//        
-//        m_skybox.boxRender(m_camera.get_camera().position);
-//        
-//        vr.set_zwrite(true);
+
         //m_ground.groundRender(m_player.get_position());
         
         if (m_game_state == CRASH) {
@@ -169,9 +170,14 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             m_player.render();
         }
         
-        //vr.set_lighting(false);
+        vr.set_lighting(false);
         
         vr.set_2d();
+        
+        render_hud();
+    }
+
+    void Play_State::render_hud() {
         ostringstream stream;
         stream.precision(3);
         stream << "Time left: ";
@@ -187,10 +193,10 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             case WIN: {
                 Font &score = get_Fonts()["score"];
                 get_Fonts()["score"].render_text("Best Times:", Point2f(get_Window().get_width() - 200, 10), Color());
-
+                
                 for (int i = 0; i < high_scores.size() && i < 5; i++) {
                     get_Fonts()["score"].render_text(itoa(i+1) + ". " + ftoa(high_scores[i]), Point2f(get_Window().get_width() - 200, 10 + (i+1) * score.get_text_height() * 1.2), Color());
-
+                    
                 }
                 
                 
@@ -217,7 +223,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             default:
                 break;
         }
-
     }
 
     void Play_State::perform_logic() {

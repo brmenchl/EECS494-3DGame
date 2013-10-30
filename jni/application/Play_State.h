@@ -34,6 +34,7 @@ public:
     void on_cover();
     
     void render();
+    void render_hud();
     void perform_logic();
     void on_event(const Zeni::Zeni_Input_ID &id, const float &confidence, const int &action);
     
