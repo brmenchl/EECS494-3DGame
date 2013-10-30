@@ -17,7 +17,7 @@ using namespace Zeni;
 class Skybox : public Game_Object {
 public:
     Skybox(const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
-           const Zeni::Vector3f &scale_ = Zeni::Vector3f(80.0f, 80.0f, 80.0f),
+           const Zeni::Vector3f &scale_ = Zeni::Vector3f(85.0f, 85.0f, 85.0f),
            const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     ~Skybox();
     void render(){};
@@ -25,7 +25,12 @@ public:
     void collide(){};
 private:
     static unsigned long m_instance_count;
-    static Zeni::Model * m_model;
+    static Zeni::Model * m_modelS1;
+    static Zeni::Model * m_modelS2;
+    static Zeni::Model * m_modelS3;
+    static Zeni::Model * m_modelS4;
+    static Zeni::Model * m_modelTop;
+    std::vector<Zeni::Model*> skybox;
 };
 
 #endif /* defined(__game__Skybox__) */
