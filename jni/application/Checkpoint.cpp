@@ -71,9 +71,6 @@ void Checkpoint::render() {
     m_model->set_translate(m_position);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
-//    if(m_keyframe > 100)
-//        m_keyframe = 0;
-//    m_model->set_keyframe(m_keyframe);
     m_model->render();
 }
 

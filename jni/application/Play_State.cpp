@@ -148,7 +148,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
-            (*check_it)->m_keyframe += 30*processing_time;
+            //(*check_it)->m_keyframe += 30*processing_time;
             (*check_it)->render();
         }
         
