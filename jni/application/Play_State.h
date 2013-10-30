@@ -16,6 +16,7 @@
 #include "Environment.h"
 #include "My_Camera.h"
 #include "Checkpoint.h"
+#include "Skybox.h"
 
 using namespace std;
 using namespace Zeni;
@@ -80,7 +81,7 @@ private:
     Crate m_crate;
     Player m_player;
     Environment m_ground;
-
+    Skybox m_skybox;
     void add_score();
     static bool score_comp(const float score1, const float score2);
 };
