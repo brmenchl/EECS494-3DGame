@@ -27,7 +27,7 @@ m_time_value(time_value_),
 next_checkpoints()
 {
     if(!m_instance_count)
-        m_model = new Model("models/crate.3ds");
+        m_model = new Model("models/checkpoint.3ds");
     ++m_instance_count;
     
     create_body();

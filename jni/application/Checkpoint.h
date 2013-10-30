@@ -19,7 +19,7 @@ class Checkpoint : public Game_Object {
 public:
     Checkpoint(float time_value_,
                const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
-               const Zeni::Vector3f &scale_ = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
+               const Zeni::Vector3f &scale_ = Zeni::Vector3f(3.0f, 3.0f, 3.0f),
                const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     Checkpoint(const Checkpoint &rhs);
     Checkpoint & operator=(const Checkpoint &rhs);
