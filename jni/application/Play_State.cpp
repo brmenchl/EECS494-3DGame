@@ -43,7 +43,8 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         y(0),
         w(0),
         h(0),
-        roll(0)
+        roll(0),
+        processing_time(0)
     {
         processing_time = 0.0f;
         time_remaining = 30.0f;
