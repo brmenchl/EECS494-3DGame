@@ -180,14 +180,14 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 
     void Play_State::render_hud() {
         ostringstream stream;
-        stream.precision(3);
-        stream << "Time left: ";
+        stream.precision(2);
+        stream << "time left: ";
         stream << time_remaining;
         Zeni::String hud(stream.str());
-        get_Fonts()["title"].render_text(hud, Point2f(), Color());
+        get_Fonts()["hud"].render_text(hud, Point2f(), Color());
         
         if (time_of_last_checkpoint - time_remaining < 0 && m_game_state == PLAY) {
-            get_Fonts()["title"].render_text("Checkpoint! +" + itoa(time_value_of_last_checkpoint) + " seconds!", Point2f(0, get_Window().get_height() - 200), Color());
+            get_Fonts()["hud"].render_text("Checkpoint! +" + itoa(time_value_of_last_checkpoint) + " seconds!", Point2f(0, get_Window().get_height() - 200), Color());
         }
         
         switch (m_game_state) {
@@ -201,23 +201,23 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 }
                 
                 
-                Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You win!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
-                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
+                Font &f = get_Fonts()["hud"];
+                get_Fonts()["hud"].render_text("you win!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case LOSE: {
-                Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
-                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
+                Font &f = get_Fonts()["hud"];
+                get_Fonts()["hud"].render_text("you ran out of time!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case CRASH: {
-                Font &f = get_Fonts()["title"];
-                get_Fonts()["title"].render_text("You crashed!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
-                get_Fonts()["title"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
+                Font &f = get_Fonts()["hud"];
+                get_Fonts()["hud"].render_text("you crashed!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
