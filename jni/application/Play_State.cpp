@@ -27,9 +27,7 @@ float Play_State::base_thrust = 1000.0f;
 float Play_State::thrust_delta = 25.0f;
 float Play_State::thrust_range = 250.0f;
 
-Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
-                                   Vector3f(40000.0f, 40000.0f, 1.0f)),
-                            m_player(Point3f(0.0f, 8000.0f, 150.0f),
+Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
                             m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
                                             Quaternion(),
@@ -63,10 +61,12 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
         Checkpoint* check2 = new Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
         Checkpoint* check3 = new Checkpoint(3.0f, Point3f(7300.0f, 5300.0f, 500.0f));
         Checkpoint* check4 = new Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
+        Checkpoint* check5 = new Checkpoint(3.0f, Point3f(5700, 7400, 150));
         
         check1->add_next_checkpoint(check2);
         check1->set_is_active(true);
-        check2->add_next_checkpoint(check3);
+        check2->add_next_checkpoint(check5);
+        check5->add_next_checkpoint(check3);
         check3->add_next_checkpoint(check4);
         check4->set_as_victory_checkpoint();
         
@@ -74,11 +74,22 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
         checkpoints.push_back(check2);
         checkpoints.push_back(check3);
         checkpoints.push_back(check4);
+        checkpoints.push_back(check5);
 
         next_checkpoints.push_back(check1);
         
+        /*Ground*/
+        Crate* g1 = new Crate(Point3f(0, 0, 0), Vector3f(90000, 90000, 1));
+//        Crate* g2 = new Crate(Point3f(0, 0, 0), Vector3f(2000, 2000, 1));
+//        Crate* g3;
+//        Crate* g4;
+//        Crate* g5;
+//        Crate* g6;
+//        Crate* g7;
+        
         /*Buildings*/
-        Residence* r1 = new Residence(Point3f(4000, 7000, 0));
+        Residence* r1 = new Residence(Point3f(4100, 7000, 0));
+        Residence* r2 = new Residence(Point3f(5900, 7000, 0));
         Crate* b1 = new Crate(Point3f(100, 500, 500), Vector3f(2000, 2000, 6000));
         Crate* sup1 = new Crate(Point3f(100, 500, 0), Vector3f(100, 100, 500));
         Crate* sup2 = new Crate(Point3f(100, 2400, 0), Vector3f(100, 100, 500));
@@ -94,7 +105,8 @@ Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
         
         objects.push_back(r1);
-        objects.push_back(&m_crate);
+        objects.push_back(r2);
+        objects.push_back(g1);
         objects.push_back(b1);
         objects.push_back(sup1);
         objects.push_back(sup2);
