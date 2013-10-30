@@ -121,11 +121,15 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
     void Play_State::render() {
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
-        vr.set_zwrite(false);
         
-        m_skybox.boxRender(m_camera.get_camera().position);
-        
-        vr.set_zwrite(true);
+        get_Video().set_lighting(true);
+        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
+        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
+        light.set_light_type(LIGHT_SPOT);
+        light.set_spot_phi(Zeni::Global::pi / 6);
+        light.set_spot_theta(Zeni::Global::pi / 4);
+        get_Video().set_Light(0, light);
+
         m_crate.render();
         
         std::list<Game_Object*>::iterator it;
@@ -137,11 +141,13 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
             (*check_it)->render();
         }
-        //m_ground.groundRender(m_player.get_position());
         
-        get_Video().set_lighting(true);
-        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
-        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
+//        vr.set_zwrite(false);
+//        
+//        m_skybox.boxRender(m_camera.get_camera().position);
+//        
+//        vr.set_zwrite(true);
+        //m_ground.groundRender(m_player.get_position());
         
         if (m_game_state == CRASH) {
             m_player.Game_Object::set_velocity(Vector3f(0,0,0));

@@ -25,7 +25,7 @@ Skybox::Skybox(const Point3f &corner_,
 
 void Skybox::boxRender(Point3f player_pos) {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
-    m_model->set_translate(Point3f(player_pos.x, player_pos.y, 0.0f));
+    m_model->set_translate(Point3f(4500, 4500, 0.0f));
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
     m_model->render();
