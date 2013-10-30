@@ -63,6 +63,13 @@ void Crate::step(const float &time_step) {
     create_body();
 }
 
+void Crate::create_body() {
+    m_body = Parallelepiped(m_position,
+                            m_rotation * m_scale.get_i(),
+                            m_rotation * m_scale.get_j(),
+                            m_rotation * m_scale.get_k());
+}
+
   void Crate::collide() {
     if(!m_source->is_playing())
       m_source->play();

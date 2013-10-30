@@ -36,6 +36,7 @@ public:
     void set_is_active(bool flag);
     float get_time_value();
     void add_next_checkpoint(Checkpoint* next);
+    std::list<Checkpoint*> get_next_checkpoints();
     void activate_next_checkpoints();
     void set_as_victory_checkpoint();
     bool get_is_victory_checkpoint();

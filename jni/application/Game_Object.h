@@ -32,7 +32,7 @@ public:
     Vector3f get_scale() {return m_scale;}
     Quaternion get_rotation() {return m_rotation;}
     void rotate(const Quaternion &rot_) { m_rotation *= rot_; }
-    const Collision::Parallelepiped & get_body() {return m_body;}
+    virtual Collision::Parallelepiped & get_body() {return m_body;}
     Vector3f get_forward_vec();
     Vector3f get_up_vec();
     Vector3f get_left_vec();
@@ -50,7 +50,6 @@ protected:
     //static Zeni::Model * m_model;
     static unsigned long m_instance_count;
     
-    void create_body();
 
 };
  

@@ -34,7 +34,7 @@ private:
     
     static Zeni::Model * m_model;
     static unsigned long m_instance_count;
-    
+    void create_body();
     Zeni::Sound_Source * m_source;
 };
 

@@ -26,7 +26,7 @@ m_velocity(Vector3f(0,0,0))
         //m_model = new Model("models/crate.3ds");
     ++m_instance_count;
     
-    create_body();
+    //create_body();
 }
 
 Game_Object::Game_Object(const Game_Object &rhs)
@@ -36,7 +36,7 @@ m_rotation(rhs.m_rotation)
 {
     ++m_instance_count;
     
-    create_body();
+    //create_body();
 }
 
 Game_Object & Game_Object::operator=(const Game_Object &rhs) {
@@ -44,7 +44,7 @@ Game_Object & Game_Object::operator=(const Game_Object &rhs) {
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
     
-    create_body();
+    //create_body();
     return *this;
 }
 
@@ -58,7 +58,7 @@ Game_Object::~Game_Object() {
 
 void Game_Object::step(const float &time_step) {
     m_position += time_step * m_velocity;
-    create_body();
+    //create_body();
 }
 
 void Game_Object::adjust_vectors() {
@@ -77,14 +77,6 @@ Vector3f Game_Object::get_up_vec(){
 
 Vector3f Game_Object::get_left_vec() {
     return m_left_vec;
-}
-
-
-void Game_Object::create_body() {
-    m_body = Parallelepiped(m_position,
-                            m_rotation * m_scale.get_i(),
-                            m_rotation * m_scale.get_j(),
-                            m_rotation * m_scale.get_k());
 }
 
 unsigned long Game_Object::m_instance_count = 0lu;

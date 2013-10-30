@@ -44,5 +44,12 @@ void Environment::groundRender(Point3f player_pos) {
     m_model->render();
 }
 
+void Environment::create_body() {
+    m_body = Parallelepiped(m_position,
+                            m_rotation * m_scale.get_i(),
+                            m_rotation * m_scale.get_j(),
+                            m_rotation * m_scale.get_k());
+}
+
 Model * Environment::m_model = 0;
 unsigned long Environment::m_instance_count = 0lu;

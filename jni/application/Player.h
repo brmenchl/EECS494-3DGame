@@ -59,17 +59,6 @@ private:
     Point3f get_front();
     Point3f get_back();
     Point3f get_wing_corner();
-    
-    // Level 2
-    //    Zeni::Point3f m_position;
-    //    Zeni::Vector3f m_scale;
-    //    Zeni::Quaternion m_rotation;
-    
-    // Level 3
-    //Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
-    
-    // Level 4
-    // A stationary Player has no controls
 };
 
 #endif

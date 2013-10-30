@@ -76,5 +76,12 @@ void Debris::collide() {
         m_source->play();
 }
 
+void Debris::create_body() {
+    m_body = Parallelepiped(m_position,
+                            m_rotation * m_scale.get_i(),
+                            m_rotation * m_scale.get_j(),
+                            m_rotation * m_scale.get_k());
+}
+
 Model * Debris::m_model = 0;
 unsigned long Debris::m_instance_count = 0lu;

@@ -102,6 +102,10 @@ void Checkpoint::add_next_checkpoint(Checkpoint* next) {
     next_checkpoints.push_back(next);
 }
 
+std::list<Checkpoint*> Checkpoint::get_next_checkpoints() {
+    return next_checkpoints;
+}
+
 void Checkpoint::activate_next_checkpoints() {
     std::list<Checkpoint*>::iterator check_it;
     for(check_it = next_checkpoints.begin(); check_it != next_checkpoints.end(); check_it++){
@@ -118,7 +122,7 @@ bool Checkpoint::get_is_victory_checkpoint() {
 }
 
 void Checkpoint::create_body() {
-    m_body = Sphere(m_position, 50.0f);
+    m_body = Sphere(m_position, 75.0f);
 }
 
 Model * Checkpoint::m_model = 0;

@@ -70,6 +70,7 @@ private:
     list<Game_Object*> objects;
     list<Checkpoint*> checkpoints;
     list<Game_Object*> debris;
+    list<Checkpoint*> next_checkpoints;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;

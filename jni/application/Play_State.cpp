@@ -13,6 +13,8 @@
 #include <String.h>
 #include <algorithm>
 #include "Debris.h"
+#include "Residence.h"
+
 using namespace std;
 using namespace Zeni;
 
@@ -25,13 +27,13 @@ float Play_State::base_thrust = 1000.0f;
 float Play_State::thrust_delta = 25.0f;
 float Play_State::thrust_range = 250.0f;
 
-Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
-                                   Vector3f(9000.0f, 9000.0f, 1.0f)),
+Play_State::Play_State() : m_crate(Point3f(-20000.0f, -20000.0f, -1.0f),
+                                   Vector3f(40000.0f, 40000.0f, 1.0f)),
                             m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
                             m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
                                             Quaternion(),
-                                            1.0f, 10000.0f),
+                                            1.0f, 90000.0f),
                                      Vector3f(0.0f, 0.0f, -39.0f),
                                      11.0f),
                             m_fog(Color(1,1,1,1),1.0f, FOG_LINEAR, 5000.0f, 7000.0f),
@@ -42,6 +44,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         checkpoints(),
         high_scores(),
         debris(),
+        next_checkpoints(),
         x(0),
         y(0),
         w(0),
@@ -73,6 +76,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 
         
         /*Buildings*/
+        Residence* r1 = new Residence(Point3f(4000, 7000, 0));
         Crate* b1 = new Crate(Point3f(100, 500, 500), Vector3f(2000, 2000, 6000));
         Crate* sup1 = new Crate(Point3f(100, 500, 0), Vector3f(100, 100, 500));
         Crate* sup2 = new Crate(Point3f(100, 2400, 0), Vector3f(100, 100, 500));
@@ -87,6 +91,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
         
+        objects.push_back(r1);
         objects.push_back(&m_crate);
         objects.push_back(b1);
         objects.push_back(sup1);
@@ -247,9 +252,9 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 
             case PLAY: {
                 update_time(processing_time);
-                rotate_player();
                 physics_loop(processing_time);
                 check_collisions();
+                rotate_player();
                 check_lose_condition();
                 break;
             }
@@ -296,7 +301,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         if (m_game_state == CRASH) {
             velocity = gravity;
         }
-        
         
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
@@ -376,6 +380,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 time_remaining += (*check_it)->get_time_value();
                 (*check_it)->set_is_active(false);
                 (*check_it)->activate_next_checkpoints();
+                next_checkpoints = (*check_it)->get_next_checkpoints();
                 if ((*check_it)->get_is_victory_checkpoint()) {
                     m_game_state = WIN;
                     add_score();
@@ -423,7 +428,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 
             case 2: //Left Toggle X
                 if (abs(confidence) > 0.25f) {
-                    w = confidence * (get_Window().get_height());
+                    w = confidence * 600;
                 } else {
                     w = 0.0f;
                 }
@@ -436,7 +441,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             case 4: //Right Toggle X - Steering
                 
                 if (abs(confidence) > 0.25f) {
-                    roll = (confidence * get_Window().get_width() / 2);
+                    roll = (confidence * 400);
                 } else {
                     roll = 0;
                 }
@@ -444,7 +449,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 
             case 5: //Right toggle Y
                 if (abs(confidence) > 0.25f) {
-                    h = -confidence * (get_Window().get_height());
+                    h = -confidence * (600);
                 } else {
                    h = 0.0f;
                 }

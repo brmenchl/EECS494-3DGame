@@ -30,6 +30,7 @@ private:
     
     Zeni::Sound_Source * m_source;
     
+    void create_body();
 };
 
 #endif /* defined(__game__Environment__) */
