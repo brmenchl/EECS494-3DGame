@@ -36,13 +36,10 @@ void Skybox::boxRender(Point3f player_pos) {
         m->set_scale(m_scale);
         m->set_rotate(rotation.second, rotation.first);
         m->render();
-        std::cout<<"rendering\n";
-        std::cout<<skybox.size()<<std::endl;
     }
 }
 
 Skybox::~Skybox() {
-    std::cout<<"deleting\n";
     for(Model *m : skybox){
         delete m;
         m = 0l;
