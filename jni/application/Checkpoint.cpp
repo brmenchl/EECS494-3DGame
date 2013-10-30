@@ -15,6 +15,9 @@ using namespace Zeni;
 using namespace Zeni::Collision;
 using namespace std;
 
+#define RADIUS 150
+#define THICKNESS 25
+
 Checkpoint::Checkpoint(float time_value_,
                        const Point3f &corner_,
              const Vector3f &scale_,
@@ -72,10 +75,10 @@ void Checkpoint::render() {
 }
 
 void Checkpoint::step(const float &time_step) {
-    if (m_is_active) {
-        m_position += time_step * m_velocity;
+    if (m_is_active) {;
         m_rotation *= Quaternion(time_step, 0, 0);
     }
+    adjust_vectors();
     create_body();
 }
 
@@ -114,6 +117,9 @@ bool Checkpoint::get_is_victory_checkpoint() {
     return m_is_victory_checkpoint;
 }
 
+void Checkpoint::create_body() {
+    m_body = Zeni::Collision::Sphere(get_position(), 500.0f);
+}
 
 Model * Checkpoint::m_model = 0;
 unsigned long Checkpoint::m_instance_count = 0lu;

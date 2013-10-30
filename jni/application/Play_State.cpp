@@ -359,6 +359,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
                 time_remaining += (*check_it)->get_time_value();
                 (*check_it)->set_is_active(false);
                 (*check_it)->activate_next_checkpoints();
+                cout << "CHECKPOINT" << endl;
                 if ((*check_it)->get_is_victory_checkpoint()) {
                     m_game_state = WIN;
                     add_score();
