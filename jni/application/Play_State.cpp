@@ -128,30 +128,17 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         
-<<<<<<< HEAD
-//        get_Video().set_lighting(true);
-//        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
-//        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,20000)));
         vr.set_zwrite(false);
 
         m_skybox.boxRender(m_camera.get_camera().position);
-//
+
         vr.set_zwrite(true);
         vr.set_Fog(m_fog);
-
-=======
-        vr.set_zwrite(false);
-
-        m_skybox.boxRender(m_camera.get_camera().position);
-
-        vr.set_zwrite(true);
-        
         get_Video().set_lighting(true);
         get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
         get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
 
         
->>>>>>> 50802a253c1c9ee3caf1997ea0bf94258c8cc5b9
 //        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
 //        light.set_light_type(LIGHT_SPOT);
 //        light.set_spot_phi(Zeni::Global::pi / 6);
