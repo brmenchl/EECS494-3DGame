@@ -76,6 +76,10 @@ The following things are unsupported:
         <filepath>textures/caution2.png</filepath>
         <tile>1</tile>
     </CAUTION2.PNG>
+    <STEEL.PNG>
+        <filepath>textures/steel.png</filepath>
+        <tile>1</tile>
+    </STEEL.PNG>
   <!--
   <one>
     <is_sprite>0</is_sprite>

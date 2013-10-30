@@ -40,6 +40,7 @@ public:
     void set_as_victory_checkpoint();
     bool get_is_victory_checkpoint();
     
+    float m_keyframe;
 private:
     
     std::list<Checkpoint*> next_checkpoints;

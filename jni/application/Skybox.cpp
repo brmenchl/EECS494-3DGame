@@ -16,7 +16,6 @@ Skybox::Skybox(const Point3f &corner_,
                const Quaternion &rotation_)
                 : Game_Object(corner_, scale_, rotation_)
 {
-        std::cout << "creating\n";
         m_modelS1 = new Model("models/side1Sky.3ds");
         skybox.push_back(m_modelS1);
         m_modelS2 = new Model("models/side2Sky.3ds");

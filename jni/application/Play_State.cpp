@@ -112,10 +112,12 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
 
     void Play_State::on_pop() {
         get_Controllers().reset_vibration_all();
+        
     }
 
     void Play_State::on_cover() {
         get_Controllers().reset_vibration_all();
+        processing_time = 0;
     }
 
     void Play_State::render() {
@@ -143,6 +145,7 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
+            (*check_it)->m_keyframe += 30*processing_time;
             (*check_it)->render();
         }
         
@@ -222,7 +225,6 @@ Play_State::Play_State() : m_crate(Point3f(0.0f, 0.0f, -1.0f),
             m_game_state = PLAY;
         }
 
-        
         switch (m_game_state) {
             case CUT_SCENE: {
                 update_time(processing_time);
