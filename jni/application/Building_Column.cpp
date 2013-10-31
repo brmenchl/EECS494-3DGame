@@ -72,7 +72,7 @@ void Building_Column::step(const float &time_step) {
 }
 
 void Building_Column::create_body() {
-    Vector3f new_scale = m_scale + Vector3f(1400, 600, 500);
+    Vector3f new_scale = m_scale + Vector3f(20, 20, 5900);
     m_my_body = Collision::Parallelepiped(m_position,
                                           m_rotation * new_scale.get_i(),
                                           m_rotation * new_scale.get_j(),

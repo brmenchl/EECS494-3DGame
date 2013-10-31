@@ -103,9 +103,13 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Crate* b4 = new Crate(Point3f(4000, 4500, 0), Vector3f(100, 100, 1500));
         Crate* b5 = new Crate(Point3f(4000, 5000, 0), Vector3f(100, 100, 900));
         Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000), Quaternion::Axis_Angle(Vector3f(0.0f, 1.0f, 0.0f), ::Zeni::Global::pi/12));
-        Building_1* b9 = new Building_1(Point3f(6000, 7800, 0));
         Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
+        
+        /** Building with supports*/
+        Building_1* build_sup = new Building_1(Point3f(6000, 7800, 0));
+        Building_Platform* bplat = new Building_Platform(Point3f(5500, 7300, 0));
+        Building_Column* bcol1 = new Building_Column(Point3f(5000, 2000, 0));
         
         objects.push_back(r1);
         objects.push_back(r2);
@@ -119,7 +123,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         objects.push_back(b4);
         objects.push_back(b5);
         objects.push_back(b8);
-        objects.push_back(b9);
+        objects.push_back(build_sup);
+        objects.push_back(bplat);
+        objects.push_back(bcol1);
         objects.push_back(b10);
         objects.push_back(b11);
 
@@ -155,9 +161,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         vr.set_zwrite(true);
         //vr.set_Fog(m_fog);
-        get_Video().set_lighting(true);
-        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
-        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
 
         
 //        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
@@ -181,6 +184,10 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
 
         //m_ground.groundRender(m_player.get_position());
+        
+        get_Video().set_lighting(true);
+        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
+        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
         
         if (m_game_state == CRASH) {
             m_player.Game_Object::set_velocity(Vector3f(0,0,0));

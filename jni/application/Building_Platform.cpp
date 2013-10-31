@@ -72,13 +72,11 @@ void Building_Platform::step(const float &time_step) {
 }
 
 void Building_Platform::create_body() {
-    Vector3f new_scale = m_scale + Vector3f(1400, 600, 500);
+    Vector3f new_scale = m_scale + Vector3f(2300, 2300, 500);
     m_my_body = Collision::Parallelepiped(m_position,
                                           m_rotation * new_scale.get_i(),
                                           m_rotation * new_scale.get_j(),
                                           m_rotation * new_scale.get_k());
-    
-    
 }
 
 Collision::Parallelepiped & Building_Platform::get_body() {

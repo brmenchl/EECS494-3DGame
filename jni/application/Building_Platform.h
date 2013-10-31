@@ -18,7 +18,7 @@ using namespace Zeni;
 class Building_Platform : public Game_Object {
 public:
     Building_Platform(const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
-              const Zeni::Vector3f &scale_ = Zeni::Vector3f(15.0f, 15.0f, 15.0f),
+              const Zeni::Vector3f &scale_ = Zeni::Vector3f(150.0f, 150.0f, 150.0f),
               const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     Building_Platform(const Building_Platform &rhs);
     Building_Platform & operator=(const Building_Platform &rhs);
