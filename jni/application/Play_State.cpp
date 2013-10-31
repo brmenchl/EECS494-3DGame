@@ -279,7 +279,17 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Bridge* bridge1 = new Bridge(Point3f(8500, 11480, 0));
 
         Turbine* turbine = new Turbine(Point3f(300,4300,0));
+        Turbine* turbine2 = new Turbine(Point3f(22000,15000,0));
+        Turbine* turbine3 = new Turbine(Point3f(20000,15000,0));
+        Turbine* turbine4 = new Turbine(Point3f(1500,13000,0));
+        Turbine* turbine5 = new Turbine(Point3f(4000,14000,0));
+
+
         animated_objects.push_back(turbine);
+        animated_objects.push_back(turbine2);
+        animated_objects.push_back(turbine3);
+        animated_objects.push_back(turbine4);
+        animated_objects.push_back(turbine5);
 
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
@@ -300,6 +310,11 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         bridge1->add_bodies_to_list(objects);
 
         turbine->add_bodies_to_list(objects);
+        turbine2->add_bodies_to_list(objects);
+        turbine3->add_bodies_to_list(objects);
+        turbine4->add_bodies_to_list(objects);
+        turbine5->add_bodies_to_list(objects);
+
         set_pausable(true);
         
         set_actions();
