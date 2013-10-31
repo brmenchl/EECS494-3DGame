@@ -71,7 +71,7 @@ Checkpoint::~Checkpoint() {
 
 void Checkpoint::step(const float &time_step) {
     if (m_is_active) {;
-        m_rotation *= Quaternion(time_step, 0, 0);
+        m_rotation *= Quaternion(time_step * 2, 0, 0);
     }
     adjust_vectors();
     create_body();
@@ -117,5 +117,5 @@ bool Checkpoint::get_is_victory_checkpoint() {
 }
 
 void Checkpoint::create_body() {
-    m_body = Sphere(m_position, 75.0f);
+    m_body = Sphere(m_position, 100.0f);
 }

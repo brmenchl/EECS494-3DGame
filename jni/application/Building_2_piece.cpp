@@ -24,7 +24,6 @@ m_source(new Sound_Source(get_Sounds()["collide"]))
         m_model = new Model(texture);
     ++m_instance_count;
     level = texture.c_str()[17]-'0';
-    cout << level<< endl;
     create_body();
 }
 

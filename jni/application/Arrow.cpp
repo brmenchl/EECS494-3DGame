@@ -19,7 +19,6 @@ Arrow::Arrow(const Point3f &corner_,
                const Quaternion &rotation_)
 : Game_Object(corner_, scale_, rotation_)
 {
-    std::cout<<"creating"<<std::endl;
         m_model = new Model("models/arrow.3ds");
    // ++m_instance_count;
 }
@@ -50,7 +49,6 @@ void Arrow::create_body() {
 }
 
 Arrow::~Arrow() {
-    std::cout << "deleting" << std::endl;
     delete m_model;
     m_model = 0l;
 }

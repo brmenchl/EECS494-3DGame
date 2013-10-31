@@ -15,6 +15,7 @@
 #include "Debris.h"
 #include "Residence.h"
 #include "Building_1.h"
+#include "Building_2.h"
 #include "Building_Column.h"
 #include "Building_Platform.h"
 #include "Platform_Building.h"
@@ -66,28 +67,68 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         time_remaining = 30.0f;
         
         /*Checkpoints*/
-        Challenge_Checkpoint* check1 = new Challenge_Checkpoint(6.0f, Point3f(3500.0f, 3500.0f, 1700.0f));
-        Reg_Checkpoint* check2 = new Reg_Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
-        Challenge_Checkpoint* check3 = new Challenge_Checkpoint(6.0f, Point3f(7300.0f, 5300.0f, 500.0f));
-        Reg_Checkpoint* check4 = new Reg_Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
-        Challenge_Checkpoint* check5 = new Challenge_Checkpoint(6.0f, Point3f(5700, 7400, 150));
-        Reg_Checkpoint* check6 = new Reg_Checkpoint(3.0f, Point3f(5000, 7400, 650));
+        Reg_Checkpoint* check1 = new Reg_Checkpoint(2.0f, Point3f(5000.0f, 9000.0f, 700.0f));
+        Reg_Checkpoint* check2 = new Reg_Checkpoint(2.0f, Point3f(8800.0f, 9400.0f, 2900.0f));
+        Challenge_Checkpoint* check3_c = new Challenge_Checkpoint(5.0f, Point3f(10700.0f, 7660.0f, 4000.0f));
+        Reg_Checkpoint* check3_r = new Reg_Checkpoint(3.0f, Point3f(11928.0f, 10765.0f, 3000.0f));
+        Reg_Checkpoint* check4 = new Reg_Checkpoint(3.0f, Point3f(14400, 16000, 615));
+        Reg_Checkpoint* check5 = new Reg_Checkpoint(1.0f, Point3f(14600, 19800, 400));
+        Reg_Checkpoint* check6 = new Reg_Checkpoint(1.0f, Point3f(7850, 20560, 350));
+        Reg_Checkpoint* check7 = new Reg_Checkpoint(2.0f, Point3f(5400, 11700, 730));
+        Challenge_Checkpoint* check7_c = new Challenge_Checkpoint(4.0f, Point3f(4500, 11710, 310));
+        Reg_Checkpoint* check8 = new Reg_Checkpoint(3.0f, Point3f(7080, 7500, 2550));
+        Reg_Checkpoint* check9 = new Reg_Checkpoint(3.0f, Point3f(8350, 5760, 7520));
+        //Reg_Checkpoint* check10 = new Reg_Checkpoint(1.0f, Point3f(12260, 11075, 2880));
+        Reg_Checkpoint* check11 = new Reg_Checkpoint(2.0f, Point3f(10800, 5683, 7766));
+        Reg_Checkpoint* check12 = new Reg_Checkpoint(2.0f, Point3f(15360, 7284, 7011));
+        Reg_Checkpoint* check13 = new Reg_Checkpoint(2.0f, Point3f(18100, 7537, 6760));
+        Reg_Checkpoint* check14 = new Reg_Checkpoint(2.0f, Point3f(19343, 5789.07, 6708.82));
+        Reg_Checkpoint* check15 = new Reg_Checkpoint(2.0f, Point3f(21131.2, 4837.54, 6672.9));
+        Reg_Checkpoint* check16 = new Reg_Checkpoint(2.0f, Point3f(23245.3, 6989.2, 6714.61));
+
+
+
+
         
         check1->add_next_checkpoint(check2);
-        check2->add_next_checkpoint(check5);
-        check2->add_next_checkpoint(check6);
-        check6->add_next_checkpoint(check4);
-        check5->add_next_checkpoint(check3);
-        check3->add_next_checkpoint(check4);
-        check4->set_as_victory_checkpoint();
-        
+        check2->add_next_checkpoint(check3_r);
+        check2->add_next_checkpoint(check3_c);
+        check3_c->add_next_checkpoint(check4);
+        check3_r->add_next_checkpoint(check4);
+        check4->add_next_checkpoint(check5);
+        check5->add_next_checkpoint(check6);
+        check6->add_next_checkpoint(check7);
+        check6->add_next_checkpoint(check7_c);
+        check7->add_next_checkpoint(check8);
+        check7_c->add_next_checkpoint(check8);
+        check8->add_next_checkpoint(check9);
+        check9->add_next_checkpoint(check11);
+        //check10->add_next_checkpoint(check11);
+        check11->add_next_checkpoint(check12);
+        check12->add_next_checkpoint(check13);
+        check13->add_next_checkpoint(check14);
+        check14->add_next_checkpoint(check15);
+        check15->add_next_checkpoint(check16);
+
         checkpoints.push_back(check1);
         checkpoints.push_back(check2);
-        checkpoints.push_back(check3);
+        checkpoints.push_back(check3_r);
+        checkpoints.push_back(check3_c);
         checkpoints.push_back(check4);
         checkpoints.push_back(check5);
         checkpoints.push_back(check6);
-        
+        checkpoints.push_back(check7);
+        checkpoints.push_back(check7_c);
+        checkpoints.push_back(check8);
+        checkpoints.push_back(check9);
+        //checkpoints.push_back(check10);
+        checkpoints.push_back(check11);
+        checkpoints.push_back(check12);
+        checkpoints.push_back(check13);
+        checkpoints.push_back(check14);
+        checkpoints.push_back(check15);
+        checkpoints.push_back(check16);
+
         //Set the initial checkpoint
         check1->set_is_active(true);
         next_checkpoints.push_back(check1);
@@ -128,21 +169,76 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         /* Done with ground */
         
         /*Buildings*/
-        Building_2* b2_1 = new Building_2(Point3f(1000, 4000, 0));
-        Residence* r1 = new Residence(Point3f(3000, 9000, 0));
-        Residence* r2 = new Residence(Point3f(4500, 9000, 0));
+        Residence* r1 = new Residence(Point3f(4500, 9000, 0));
+        Residence* r2 = new Residence(Point3f(3000, 9000, 0));
+        Residence* r3 = new Residence(Point3f(1500, 9000, 0));
+        Residence* r4 = new Residence(Point3f(0, 9000, 0));
+        Residence* r5 = new Residence(Point3f(6000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
+        Residence* r6 = new Residence(Point3f(4500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
+        Residence* r7 = new Residence(Point3f(3000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
+        Residence* r8 = new Residence(Point3f(1500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
+        Residence* r9 = new Residence(Point3f(6000, 9600, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
+        Residence* r10 = new Residence(Point3f(12500, 21000, 0));
+        Residence* r11 = new Residence(Point3f(11000, 21000, 0));
+        Residence* r12 = new Residence(Point3f(9500, 21000, 0));
+        Residence* r13 = new Residence(Point3f(8000, 21000, 0));
+        Residence* r14 = new Residence(Point3f(20500, 21000, 0));
+        Residence* r15 = new Residence(Point3f(19000, 21000, 0));
+        Residence* r16 = new Residence(Point3f(17500, 21000, 0));
+        Residence* r17 = new Residence(Point3f(16000, 21000, 0));
+
         Platform_Building* platform_1 = new Platform_Building(Point3f(8000, 4900, 0));
         Platform_Building* platform_2 = new Platform_Building(Point3f(7500, 17000, 0));
-        Platform_Building* platform_3 = new Platform_Building(Point3f(15500, 17000, 0));
+        Platform_Building* platform_3 = new Platform_Building(Point3f(11000, 17000, 0));
+        Platform_Building* platform_4 = new Platform_Building(Point3f(16000, 17000, 0));
+        Platform_Building* platform_5 = new Platform_Building(Point3f(19500, 17000, 0));
+        Platform_Building* platform_6 = new Platform_Building(Point3f(24000, 17000, 0));
+        Platform_Building* platform_7 = new Platform_Building(Point3f(27500, 17000, 0));
+        
+        Platform_Building* platform_8 = new Platform_Building(Point3f(11000, 4900, 0));
+        Platform_Building* platform_9 = new Platform_Building(Point3f(16000, 4900, 0));
+        Platform_Building* platform_10 = new Platform_Building(Point3f(19500, 4900, 0));
+        Platform_Building* platform_11 = new Platform_Building(Point3f(24000, 4900, 0));
+        Platform_Building* platform_12 = new Platform_Building(Point3f(27500, 4900, 0));
+
+        Building_2* building2_1 = new Building_2(Point3f(1000, 4000, 0));
+        Building_2* building2_2 = new Building_2(Point3f(8500, 9000, 0));
 
     
         //objects.push_back(c);
         objects.push_back(r1);
         objects.push_back(r2);
+        objects.push_back(r3);
+        objects.push_back(r4);
+        objects.push_back(r5);
+        objects.push_back(r6);
+        objects.push_back(r7);
+        objects.push_back(r8);
+        objects.push_back(r9);
+        objects.push_back(r10);
+        objects.push_back(r11);
+        objects.push_back(r12);
+        objects.push_back(r13);
+        objects.push_back(r14);
+        objects.push_back(r15);
+        objects.push_back(r16);
+        objects.push_back(r17);
+
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
-        b2_1->add_bodies_to_list(objects);
         platform_3->add_bodies_to_list(objects);
+        platform_4->add_bodies_to_list(objects);
+        platform_5->add_bodies_to_list(objects);
+        platform_6->add_bodies_to_list(objects);
+        platform_7->add_bodies_to_list(objects);
+        platform_8->add_bodies_to_list(objects);
+        platform_9->add_bodies_to_list(objects);
+        platform_10->add_bodies_to_list(objects);
+        platform_11->add_bodies_to_list(objects);
+        platform_12->add_bodies_to_list(objects);
+
+        building2_1->add_bodies_to_list(objects);
+        building2_2->add_bodies_to_list(objects);
 
         set_pausable(true);
         
@@ -208,7 +304,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
-            (*check_it)->render();
+            if ((*check_it)->get_is_active()) {
+                (*check_it)->render();
+            }
         }
         
         if (m_game_state == CRASH) {
@@ -523,11 +621,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                     break;
                 }
                 
-                if (confidence) {
-                    m_camera.set_focus_object(next_checkpoints.front());
-                } else {
-                    m_camera.unset_focus_object();
-                }
                 break;
             }
                 
@@ -551,13 +644,21 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 }
                 break;
                 
-            case 8: //Left shoulder - Zoom closer to plane
-                m_camera.decrease_follow_distance();
+            case 8: { //Left shoulder - Zoom closer to plane
+//                m_camera.decrease_follow_distance();
+                if (confidence) {
+                    m_camera.set_focus_object(next_checkpoints.front());
+                } else {
+                    m_camera.unset_focus_object();
+                }
                 break;
+            }
                 
-            case 9: //Right shoulder - Zoom farther from plane
-                m_camera.increase_follow_distance();
+            case 9: { //Right shoulder - Zoom farther from plane
+                //m_camera.increase_follow_distance();
+                cout << m_player.get_position().x << ", " << m_player.get_position().y << ", " << m_player.get_position().z << endl;
                 break;
+            }
                 
             case 13: {//B button
                 if (m_game_state != CUT_SCENE && m_game_state != PLAY) {
@@ -613,7 +714,6 @@ void Play_State::read_high_scores() {
     inFile.close();
     std::sort(high_scores.begin(), high_scores.end(), Play_State::score_comp);
     for (int i = 0; i < high_scores.size(); i++) {
-        cout << high_scores[i] << endl;
     }
 }
 

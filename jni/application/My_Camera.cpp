@@ -156,7 +156,6 @@ void My_Camera::chase_attached(Vector3f vel) {
 
         m_focus_length += 0.00028f;
         focus = m_attached_object->get_position() + look_vec * m_focus_length;
-        cout << m_focus_length << endl;
         
         m_camera.look_at(focus);
         

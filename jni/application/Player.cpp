@@ -111,7 +111,6 @@ bool Player::is_crashing(list<Game_Object*> &objects){
     std::list<Game_Object*>::iterator it;
     for(it = objects.begin(); it != objects.end(); it++){
         if(Player::get_player_body().first.intersects((*it)->get_body()) || Player::get_player_body().second.intersects((*it)->get_body())){
-            cout << "Collision!" << endl;
             return true;
         }
     }
