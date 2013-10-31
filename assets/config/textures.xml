@@ -100,6 +100,18 @@ The following things are unsupported:
         <filepath>textures/road.png</filepath>
         <tile>1</tile>
     </ROAD.PNG>
+    <MARBLE.PNG>
+        <filepath>textures/marble.png</filepath>
+        <tile>1</tile>
+    </MARBLE.PNG>
+    <MARBWALL.PNG>
+        <filepath>textures/marbwall.png</filepath>
+        <tile>1</tile>
+    </MARBWALL.PNG>
+    <WINDOW.PNG>
+        <filepath>textures/window.png</filepath>
+        <tile>1</tile>
+    </WINDOW.PNG>
   <!--
   <one>
     <is_sprite>0</is_sprite>
