@@ -81,7 +81,6 @@ void Bridge::render() {
 }
 
 void Bridge::step(const float &time_step) {
-    m_position += time_step * m_velocity;
     create_body();
 }
 

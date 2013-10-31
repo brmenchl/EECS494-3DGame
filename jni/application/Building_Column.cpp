@@ -67,7 +67,6 @@ void Building_Column::render() {
 }
 
 void Building_Column::step(const float &time_step) {
-    m_position += time_step * m_velocity;
     create_body();
 }
 

@@ -87,7 +87,6 @@ void Building_2::render() {
 }
 
 void Building_2::step(const float &time_step) {
-    m_position += time_step * m_velocity;
     create_body();
 }
 
