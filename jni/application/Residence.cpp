@@ -22,7 +22,7 @@ Residence::Residence(const Point3f &corner_,
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     if(!m_instance_count)
-        m_model = new Model("models/building2l4.3ds");
+        m_model = new Model("models/residence.3ds");
     ++m_instance_count;
     
     create_body();
