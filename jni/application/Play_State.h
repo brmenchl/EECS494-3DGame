@@ -86,10 +86,8 @@ private:
     Zeni::Time_HQ time_passed;
     My_Camera m_camera;
     Player m_player;
-    Environment m_ground;
     Skybox m_skybox;
     Arrow m_arrow;
-    Fog m_fog;
     void add_score();
     static bool score_comp(const float score1, const float score2);
 };

@@ -19,6 +19,7 @@
 #include "Building_Platform.h"
 #include "Platform_Building.h"
 #include "Grass.h"
+#include "Building_2.h"
 #include "Road_Straight.h"
 
 using namespace std;
@@ -40,8 +41,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                             1.0f, 90000.0f),
                                      Vector3f(0.0f, 0.0f, -39.0f),
                                      11.0f),
-                            m_fog(Color(1,1,1,1),1.0f, FOG_LINEAR, 5000.0f, 7000.0f),
-                            m_ground(),
                             m_arrow(),
                             m_skybox(),
                             m_game_state(CUT_SCENE),
@@ -113,12 +112,13 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Residence* r2 = new Residence(Point3f(5900, 7000, 0));
         Platform_Building* platform_1 = new Platform_Building(Point3f(5500, 4900, 0));
         Platform_Building* platform_2 = new Platform_Building(Point3f(5800, 12000, 0));
-    
+        Building_2* b2_1 = new Building_2(Point3f(1000, 4000, 0));
         objects.push_back(c);
         objects.push_back(r1);
         objects.push_back(r2);
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
+        b2_1->add_bodies_to_list(objects);
 
         set_pausable(true);
         
