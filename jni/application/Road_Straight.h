@@ -10,7 +10,6 @@
 #define __game__Road_Straight__
 
 #include <iostream>
-#include <iostream>
 #include <zenilib.h>
 #include "Game_Object.h"
 
