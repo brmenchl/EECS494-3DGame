@@ -21,6 +21,9 @@
 #include "Grass.h"
 #include "Building_2.h"
 #include "Road_Straight.h"
+#include "Road_Intersection.h"
+#include "Challenge_Checkpoint.h"
+#include "Reg_Checkpoint.h"
 
 using namespace std;
 using namespace Zeni;
@@ -63,15 +66,17 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         time_remaining = 30.0f;
         
         /*Checkpoints*/
-        Checkpoint* check1 = new Checkpoint(3.0f, Point3f(3500.0f, 3500.0f, 1700.0f));
-        Checkpoint* check2 = new Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
-        Checkpoint* check3 = new Checkpoint(3.0f, Point3f(7300.0f, 5300.0f, 500.0f));
-        Checkpoint* check4 = new Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
-        Checkpoint* check5 = new Checkpoint(3.0f, Point3f(5700, 7400, 150));
+        Challenge_Checkpoint* check1 = new Challenge_Checkpoint(6.0f, Point3f(3500.0f, 3500.0f, 1700.0f));
+        Reg_Checkpoint* check2 = new Reg_Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
+        Challenge_Checkpoint* check3 = new Challenge_Checkpoint(6.0f, Point3f(7300.0f, 5300.0f, 500.0f));
+        Reg_Checkpoint* check4 = new Reg_Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
+        Challenge_Checkpoint* check5 = new Challenge_Checkpoint(6.0f, Point3f(5700, 7400, 150));
+        Reg_Checkpoint* check6 = new Reg_Checkpoint(3.0f, Point3f(5000, 7400, 650));
         
         check1->add_next_checkpoint(check2);
-        check1->set_is_active(true);
         check2->add_next_checkpoint(check5);
+        check2->add_next_checkpoint(check6);
+        check6->add_next_checkpoint(check4);
         check5->add_next_checkpoint(check3);
         check3->add_next_checkpoint(check4);
         check4->set_as_victory_checkpoint();
@@ -81,44 +86,63 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         checkpoints.push_back(check3);
         checkpoints.push_back(check4);
         checkpoints.push_back(check5);
-
+        checkpoints.push_back(check6);
+        
+        //Set the initial checkpoint
+        check1->set_is_active(true);
         next_checkpoints.push_back(check1);
         /* Done with checkpoints */
         
         /*Ground*/
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 30; j++) {
+        for (int i = -15; i < 15; i++) {
+            for (int j = -15; j < 15; j++) {
                 
-                Grass* c = new Grass(Point3f(i * 800, j * 800, 0), Vector3f(10, 10, 1));
+                Grass* c = new Grass(Point3f(i * 8000, j * 8000, 0), Vector3f(100, 100, 1));
                 ground_tiles.push_back(c);
-                
-                if (j == 5 || j == 10 || j == 15) {
+            }
+        }
+        
+        for (int i = 0; i < 35; i++) {
+            for (int j = 0; j < 35; j++) {
+                bool w, h;
+                w = j % 5 == 0 && j > 0;
+                h = (i + 1) % 10 == 0 && i > 0;
+                if (w) {
                     Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1));
                     ground_tiles.push_back(c);
                 }
                 
-                if (i == 5 || 5 == 10 || i == 15) {
+                if (h) {
                     Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
                     ground_tiles.push_back(c);
                 }
                 
+                if (h && w) {
+                    Road_Intersection* c = new Road_Intersection(Point3f((i - 1) * 800, j * 800, 2), Vector3f(10, 10, 1));
+                    ground_tiles.push_back(c);
+                }
             }
         }
-        Grass* c  = new Grass(Point3f(0, 0, -1), Vector3f(800 * 30, 800 * 30, 1));
+
+        //Grass* c  = new Grass(Point3f(0, 0, -1), Vector3f(800 * 30, 800 * 30, 1));
         /* Done with ground */
         
         /*Buildings*/
-        Residence* r1 = new Residence(Point3f(4100, 7000, 0));
-        Residence* r2 = new Residence(Point3f(5900, 7000, 0));
-        Platform_Building* platform_1 = new Platform_Building(Point3f(5500, 4900, 0));
-        Platform_Building* platform_2 = new Platform_Building(Point3f(5800, 12000, 0));
         Building_2* b2_1 = new Building_2(Point3f(1000, 4000, 0));
-        objects.push_back(c);
+        Residence* r1 = new Residence(Point3f(3000, 9000, 0));
+        Residence* r2 = new Residence(Point3f(4500, 9000, 0));
+        Platform_Building* platform_1 = new Platform_Building(Point3f(8000, 4900, 0));
+        Platform_Building* platform_2 = new Platform_Building(Point3f(7500, 17000, 0));
+        Platform_Building* platform_3 = new Platform_Building(Point3f(15500, 17000, 0));
+
+    
+        //objects.push_back(c);
         objects.push_back(r1);
         objects.push_back(r2);
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
         b2_1->add_bodies_to_list(objects);
+        platform_3->add_bodies_to_list(objects);
 
         set_pausable(true);
         
@@ -169,22 +193,23 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         vr.set_zwrite(true);
         
         std::list<Game_Object*>::iterator it;
+        for(it = ground_tiles.begin(); it != ground_tiles.end(); it++){
+            (*it)->render();
+        }
+
         for(it = objects.begin(); it != objects.end(); it++){
             (*it)->render();
         }
         
-        for(it = ground_tiles.begin(); it != ground_tiles.end(); it++){
-            (*it)->render();
-        }
+        
+        get_Video().set_lighting(true);
+        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
+        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
             (*check_it)->render();
         }
-        
-        get_Video().set_lighting(true);
-        get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
-        get_Video().set_Light(0, Zeni::Light::Light(Color(.2, .7, .7, .7), Color(.5, .5, .5, .5), Color(.01, .5, .5, .5), Point3f(9000,12000,30000)));
         
         if (m_game_state == CRASH) {
             m_player.Game_Object::set_velocity(Vector3f(0,0,0));
@@ -405,6 +430,10 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 time_remaining += (*check_it)->get_time_value();
                 (*check_it)->set_is_active(false);
                 (*check_it)->activate_next_checkpoints();
+                std::list<Checkpoint*>::iterator next_check_it;
+                for (next_check_it = next_checkpoints.begin(); next_check_it != next_checkpoints.end(); next_check_it++) {
+                    (*next_check_it)->set_is_active(false);
+                }
                 next_checkpoints = (*check_it)->get_next_checkpoints();
                 if ((*check_it)->get_is_victory_checkpoint()) {
                     m_game_state = WIN;
