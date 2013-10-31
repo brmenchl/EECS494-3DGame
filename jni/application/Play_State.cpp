@@ -108,8 +108,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         /** Building with supports*/
         Building_1* build_sup = new Building_1(Point3f(6000, 7800, 0));
-        Building_Platform* bplat = new Building_Platform(Point3f(5500, 7300, 0));
-        Building_Column* bcol1 = new Building_Column(Point3f(5000, 2000, 0));
+        Building_Platform* bplat = new Building_Platform(Point3f(5500, 7300, 2700));
+        Building_Platform* bplat2 = new Building_Platform(Point3f(5500, 7300, 5900));
+        Building_Column* bcol1 = new Building_Column(Point3f(5600, 7400, 0));
         
         objects.push_back(r1);
         objects.push_back(r2);
@@ -123,11 +124,13 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         objects.push_back(b4);
         objects.push_back(b5);
         objects.push_back(b8);
-        objects.push_back(build_sup);
-        objects.push_back(bplat);
-        objects.push_back(bcol1);
         objects.push_back(b10);
         objects.push_back(b11);
+        
+        objects.push_back(build_sup);
+        objects.push_back(bplat);
+        objects.push_back(bplat2);
+        objects.push_back(bcol1);
 
         set_pausable(true);
         
