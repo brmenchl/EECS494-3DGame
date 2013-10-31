@@ -44,6 +44,7 @@ public:
     Vector3f get_player_velocity();
     void physics_loop(float processing_time);
     void rotate_player();
+    void rotate_player(float time_step);
     void check_collisions();
     void explode_player();
     void invert_if_even(int &x);

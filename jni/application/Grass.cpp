@@ -1,12 +1,12 @@
 //
-//  Building_1.cpp
+//  Grass.cpp
 //  game
 //
 //  Created by David Zilli on 10/30/13.
 //
 //
 
-#include "Building_1.h"
+#include "Grass.h"
 #include <zenilib.h>
 #include <iostream>
 #include "Game_Object.h"
@@ -15,20 +15,20 @@ using namespace Zeni;
 using namespace Zeni::Collision;
 using namespace std;
 
-Building_1::Building_1(const Point3f &corner_,
-                     const Vector3f &scale_,
-                     const Quaternion &rotation_)
+Grass::Grass(const Point3f &corner_,
+             const Vector3f &scale_,
+             const Quaternion &rotation_)
 : Game_Object(corner_, scale_, rotation_),
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     if(!m_instance_count)
-        m_model = new Model("models/building1center.3ds");
+        m_model = new Model("models/grass.3ds");
     ++m_instance_count;
     
     create_body();
 }
 
-Building_1::Building_1(const Building_1 &rhs)
+Grass::Grass(const Grass &rhs)
 : Game_Object(rhs),
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
@@ -37,7 +37,7 @@ m_source(new Sound_Source(get_Sounds()["collide"]))
     create_body();
 }
 
-Building_1 & Building_1::operator=(const Building_1 &rhs) {
+Grass & Grass::operator=(const Grass &rhs) {
     m_position = rhs.m_position;
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
@@ -47,7 +47,7 @@ Building_1 & Building_1::operator=(const Building_1 &rhs) {
     return *this;
 }
 
-Building_1::~Building_1() {
+Grass::~Grass() {
     delete m_source;
     
     if(!--m_instance_count) {
@@ -56,7 +56,7 @@ Building_1::~Building_1() {
     }
 }
 
-void Building_1::render() {
+void Grass::render() {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
     
     m_model->set_translate(m_position);
@@ -66,29 +66,23 @@ void Building_1::render() {
     m_model->render();
 }
 
-void Building_1::step(const float &time_step) {
+void Grass::step(const float &time_step) {
     m_position += time_step * m_velocity;
     create_body();
 }
 
-void Building_1::create_body() {
-    Vector3f new_scale = m_scale + Vector3f(1600, 1600, 7400);
-    m_my_body = Collision::Parallelepiped(m_position,
-                                          m_rotation * new_scale.get_i(),
-                                          m_rotation * new_scale.get_j(),
-                                          m_rotation * new_scale.get_k());
-    
-    
+void Grass::create_body() {
+    Vector3f new_scale = m_scale + Vector3f(800, 800, 1);
+    m_body = Parallelepiped(m_position,
+                            m_rotation * new_scale.get_i(),
+                            m_rotation * new_scale.get_j(),
+                            m_rotation * new_scale.get_k());
 }
 
-Collision::Parallelepiped & Building_1::get_body() {
-    return m_my_body;
-}
-
-void Building_1::collide() {
+void Grass::collide() {
     if(!m_source->is_playing())
         m_source->play();
 }
 
-Model * Building_1::m_model = 0;
-unsigned long Building_1::m_instance_count = 0lu;
+Model * Grass::m_model = 0;
+unsigned long Grass::m_instance_count = 0lu;

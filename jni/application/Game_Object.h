@@ -21,7 +21,7 @@ public:
           const Quaternion &rotation_ = Quaternion::Axis_Angle(Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     Game_Object(const Game_Object &rhs);
     Game_Object & operator=(const Game_Object &rhs);
-    ~Game_Object();
+    virtual ~Game_Object();
     
     virtual void render() = 0;
     virtual void collide() = 0;

@@ -18,6 +18,8 @@
 #include "Building_Column.h"
 #include "Building_Platform.h"
 #include "Platform_Building.h"
+#include "Grass.h"
+#include "Road_Straight.h"
 
 using namespace std;
 using namespace Zeni;
@@ -81,50 +83,37 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         checkpoints.push_back(check5);
 
         next_checkpoints.push_back(check1);
+        /* Done with checkpoints */
         
         /*Ground*/
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                Crate* c = new Crate(Point3f(i * 2500, j * 2500, 0), Vector3f(2500, 2500, 1));
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                
+                Grass* c = new Grass(Point3f(i * 800, j * 800, 0), Vector3f(10, 10, 1));
                 objects.push_back(c);
+                
+                if (j == 5 || j == 10 || j == 15) {
+                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1));
+                    objects.push_back(c);
+                }
+                
+                if (i == 5 || 5 == 10 || i == 15) {
+                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
+                    objects.push_back(c);
+                }
+                
             }
         }
-
+        /* Done with ground */
         
         /*Buildings*/
         Residence* r1 = new Residence(Point3f(4100, 7000, 0));
         Residence* r2 = new Residence(Point3f(5900, 7000, 0));
         Platform_Building* platform_1 = new Platform_Building(Point3f(5500, 7300, 0));
         Platform_Building* platform_2 = new Platform_Building(Point3f(5800, 12000, 0));
-        
-        Crate* b1 = new Crate(Point3f(100, 500, 500), Vector3f(2000, 2000, 6000));
-        Crate* sup1 = new Crate(Point3f(100, 500, 0), Vector3f(100, 100, 500));
-        Crate* sup2 = new Crate(Point3f(100, 2400, 0), Vector3f(100, 100, 500));
-        Crate* sup3 = new Crate(Point3f(1900, 500, 0), Vector3f(100, 100, 500));
-        Crate* sup4 = new Crate(Point3f(1900, 2400, 0), Vector3f(100, 100, 500));
-        Crate* b2 = new Crate(Point3f(2500, 500, 0), Vector3f(2000, 2000, 3000));
-        Building_Column* b3 = new Building_Column(Point3f(4000, 4000, 0), Vector3f(50, 50, 20));
-        Crate* b4 = new Crate(Point3f(4000, 4500, 0), Vector3f(100, 100, 1500));
-        Crate* b5 = new Crate(Point3f(4000, 5000, 0), Vector3f(100, 100, 900));
-        Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000), Quaternion::Axis_Angle(Vector3f(0.0f, 1.0f, 0.0f), ::Zeni::Global::pi/12));
-        Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
-        Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
     
         objects.push_back(r1);
         objects.push_back(r2);
-        objects.push_back(b1);
-        objects.push_back(sup1);
-        objects.push_back(sup2);
-        objects.push_back(sup3);
-        objects.push_back(sup4);
-        objects.push_back(b2);
-        objects.push_back(b3);
-        objects.push_back(b4);
-        objects.push_back(b5);
-        objects.push_back(b8);
-        objects.push_back(b10);
-        objects.push_back(b11);
-        
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
 
@@ -141,6 +130,20 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
     }
 
     void Play_State::on_pop() {
+        std::list<Game_Object*>::iterator it;
+         for(it = debris.begin(); it != debris.end(); it++){
+             delete (*it);
+         }
+        
+        for(it = objects.begin(); it != objects.end(); it++){
+            delete (*it);
+        }
+        
+        std::list<Checkpoint*>::iterator check_it;
+        for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
+            delete (*check_it);
+        }
+        
         get_Controllers().reset_vibration_all();
         
     }
@@ -155,20 +158,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         vr.set_3d(m_camera.get_camera());
         
         vr.set_zwrite(false);
-
         m_skybox.boxRender(m_camera.get_camera().position);
-
         vr.set_zwrite(true);
-        //vr.set_Fog(m_fog);
-
-        
-//        Zeni::Light::Light light = Zeni::Light::Light(Color(.2, .5, .5, .5), Color(.5, .7, .2, .5), Color(.01, .5, .5, .5), Point3f(5000,5000,10000), Vector3f(0,0,-1));
-//        light.set_light_type(LIGHT_SPOT);
-//        light.set_spot_phi(Zeni::Global::pi / 6);
-//        light.set_spot_theta(Zeni::Global::pi / 4);
-        //get_Video().set_Light(0, light);
-
-       // m_crate.render();
         
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
@@ -177,12 +168,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
-            //(*check_it)->m_keyframe += 30*processing_time;
             (*check_it)->render();
         }
-        
-
-        //m_ground.groundRender(m_player.get_position());
         
         get_Video().set_lighting(true);
         get_Video().set_ambient_lighting(Color(1.0f, 0.0f, 0.0f, 0.0f));
@@ -199,13 +186,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         }
         
         vr.set_lighting(false);
-        
-        //vr.set_zwrite(false);
-//        std::list<Checkpoint*>::iterator next_check;
-//        for(next_check = next_checkpoints.begin(); next_check != next_checkpoints.end(); next_check++){
-//            m_arrow.arrowRender(m_camera, (*next_check));
-//        }
-       // vr.set_zwrite(true);
         
         vr.set_2d();
         
@@ -283,7 +263,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 update_time(processing_time);
                 physics_loop(processing_time);
                 check_collisions();
-                rotate_player();
+                //rotate_player();
                 check_lose_condition();
                 break;
             }
@@ -345,6 +325,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 time_step = processing_time;
             }
             
+            rotate_player(time_step * 120);
+            
             /** Move each object which needs to **/
             std::list<Game_Object*>::iterator it;
             for(it = debris.begin(); it != debris.end(); it++){
@@ -363,9 +345,11 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         }
     }
 
-    void Play_State::rotate_player() {
+    void Play_State::rotate_player(float time_step) {
         /** Rotate the aircraft **/
-        m_player.rotate(Quaternion(-w / (look_sensitivity * yaw_modifier), h / look_sensitivity, roll / roll_sensitivity));
+        m_player.rotate(Quaternion((-w * time_step / (look_sensitivity * yaw_modifier)),
+                                   (h * time_step / look_sensitivity),
+                                   (roll * time_step / roll_sensitivity)));
         m_player.adjust_vectors();
     }
 
