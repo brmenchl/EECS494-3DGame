@@ -50,6 +50,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         high_scores(),
         debris(),
         next_checkpoints(),
+        ground_tiles(),
         x(0),
         y(0),
         w(0),
@@ -86,32 +87,34 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         /* Done with checkpoints */
         
         /*Ground*/
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 30; j++) {
                 
                 Grass* c = new Grass(Point3f(i * 800, j * 800, 0), Vector3f(10, 10, 1));
-                objects.push_back(c);
+                ground_tiles.push_back(c);
                 
                 if (j == 5 || j == 10 || j == 15) {
                     Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1));
-                    objects.push_back(c);
+                    ground_tiles.push_back(c);
                 }
                 
                 if (i == 5 || 5 == 10 || i == 15) {
                     Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
-                    objects.push_back(c);
+                    ground_tiles.push_back(c);
                 }
                 
             }
         }
+        Grass* c  = new Grass(Point3f(0, 0, -1), Vector3f(800 * 30, 800 * 30, 1));
         /* Done with ground */
         
         /*Buildings*/
         Residence* r1 = new Residence(Point3f(4100, 7000, 0));
         Residence* r2 = new Residence(Point3f(5900, 7000, 0));
-        Platform_Building* platform_1 = new Platform_Building(Point3f(5500, 7300, 0));
+        Platform_Building* platform_1 = new Platform_Building(Point3f(5500, 4900, 0));
         Platform_Building* platform_2 = new Platform_Building(Point3f(5800, 12000, 0));
     
+        objects.push_back(c);
         objects.push_back(r1);
         objects.push_back(r2);
         platform_1->add_bodies_to_list(objects);
@@ -139,6 +142,10 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
             delete (*it);
         }
         
+        for(it = ground_tiles.begin(); it != ground_tiles.end(); it++){
+            delete (*it);
+        }
+        
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
             delete (*check_it);
@@ -163,6 +170,10 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         std::list<Game_Object*>::iterator it;
         for(it = objects.begin(); it != objects.end(); it++){
+            (*it)->render();
+        }
+        
+        for(it = ground_tiles.begin(); it != ground_tiles.end(); it++){
             (*it)->render();
         }
         
@@ -263,7 +274,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 update_time(processing_time);
                 physics_loop(processing_time);
                 check_collisions();
-                //rotate_player();
                 check_lose_condition();
                 break;
             }
@@ -325,7 +335,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 time_step = processing_time;
             }
             
-            rotate_player(time_step * 120);
+            if (m_game_state == PLAY) {
+                rotate_player(time_step * 110);
+            }
             
             /** Move each object which needs to **/
             std::list<Game_Object*>::iterator it;

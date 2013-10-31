@@ -72,6 +72,7 @@ private:
     list<Game_Object*> objects;
     list<Checkpoint*> checkpoints;
     list<Game_Object*> debris;
+    list<Game_Object*> ground_tiles;
     list<Checkpoint*> next_checkpoints;
     int m_game_state;
     float x, y, w, h, roll;
