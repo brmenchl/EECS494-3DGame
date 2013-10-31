@@ -14,6 +14,9 @@
 #include <algorithm>
 #include "Debris.h"
 #include "Residence.h"
+#include "Building_1.h"
+#include "Building_Column.h"
+#include "Building_Platform.h"
 
 using namespace std;
 using namespace Zeni;
@@ -100,7 +103,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Crate* b4 = new Crate(Point3f(4000, 4500, 0), Vector3f(100, 100, 1500));
         Crate* b5 = new Crate(Point3f(4000, 5000, 0), Vector3f(100, 100, 900));
         Crate* b8 = new Crate(Point3f(6000, 5000, 0), Vector3f(1000, 1000, 5000), Quaternion::Axis_Angle(Vector3f(0.0f, 1.0f, 0.0f), ::Zeni::Global::pi/12));
-        Crate* b9 = new Crate(Point3f(6000, 7800, 0), Vector3f(1000, 1000, 5000));
+        Building_1* b9 = new Building_1(Point3f(6000, 7800, 0));
         Crate* b10 = new Crate(Point3f(7800, 5000, 0), Vector3f(1000, 1000, 5000));
         Crate* b11 = new Crate(Point3f(7800, 7800, 0), Vector3f(1000, 1000, 5000));
         
