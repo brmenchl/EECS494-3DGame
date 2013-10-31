@@ -42,7 +42,7 @@ public:
     
     void update_time(float processing_time);
     void check_lose_condition();
-    Vector3f get_player_velocity();
+    Vector3f get_player_velocity(float time_step);
     void physics_loop(float processing_time);
     void rotate_player();
     void rotate_player(float time_step);

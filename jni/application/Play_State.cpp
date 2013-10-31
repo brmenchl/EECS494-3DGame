@@ -63,7 +63,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         h(0),
         roll(0),
         processing_time(0),
-        time_of_last_checkpoint(MAXFLOAT),
+        time_of_last_checkpoint(100000),
         time_value_of_last_checkpoint(0)
     {
         processing_time = 0.0f;
@@ -564,21 +564,21 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
     }
 
     void Play_State::physics_loop(float processing_time) {
-        Vector3f velocity = get_player_velocity();
-        
-        if (m_game_state == CRASH) {
-            velocity = gravity;
-        }
-        
         /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
         if(processing_time > 0.1f) {
             processing_time = 0.1f;
         }
         
-        m_player.set_velocity(velocity);
-        
         /** Physics processing loop**/
         for(float time_step = 0.0005f; processing_time > 0.0f;) {
+            
+            Vector3f velocity = get_player_velocity(time_step * 90);
+            
+            if (m_game_state == CRASH) {
+                velocity = gravity;
+            }
+            
+            m_player.set_velocity(velocity);
             
             if(time_step > processing_time) {
                 time_step = processing_time;
@@ -618,18 +618,18 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         m_player.adjust_vectors();
     }
 
-    Vector3f Play_State::get_player_velocity() {
+    Vector3f Play_State::get_player_velocity(float time_step) {
         //Get jet thrust
         if (m_game_state == PLAY) {
             /** Calculate current thrust**/
             float desired_thrust = base_thrust + thrust_range * y;
             
             if (thrust_amount > desired_thrust) {
-                thrust_amount -= thrust_delta;
+                thrust_amount -= thrust_delta * time_step;
             }
             
             if (thrust_amount < desired_thrust) {
-                thrust_amount += thrust_delta;
+                thrust_amount += thrust_delta * time_step;
             }
             
             if (thrust_amount == desired_thrust) {
@@ -737,25 +737,12 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 }
                 break;
                 
-            case 6: //D up
+            case 10: //D down
                 m_camera.set_horizon_lock();
                 break;
                 
-            case 10://D down
+            case 6://D up
                 m_camera.set_rolling();
-                break;
-                
-            case 12: {//D Left down
-                
-                if (m_game_state != PLAY) {
-                    break;
-                }
-                
-                break;
-            }
-                
-            case 14: //D Left up
-                m_camera.unset_focus_object();
                 break;
                 
             case 7: //Trigger Right - Thrust
@@ -815,8 +802,6 @@ void Play_State::set_actions() {
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_RIGHTY /* y-rotation */), 5);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_UP /* z-axis */), 6);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN /* z-axis */), 10);
-    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_A /* z-axis */), 12);
-    set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONUP , SDL_CONTROLLER_BUTTON_A /* z-axis */), 14);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERRIGHT /* z-axis */), 7);
     set_action(Zeni_Input_ID(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLER_AXIS_TRIGGERLEFT /* z-axis */), 11);
     set_action(Zeni_Input_ID(SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_LEFTSHOULDER /* roll */), 8);
