@@ -30,11 +30,15 @@ m_time_value(time_value_),
 m_keyframe(0.0f),
 next_checkpoints()
 {
-    if(!m_instance_count)
-        m_model = new Model("models/checkpoint.3ds");
-    ++m_instance_count;
+    //load_model();
     
     create_body();
+}
+
+void Checkpoint::load_model() {
+//    if(!m_instance_count)
+//        m_model = new Model("models/checkpoint.3ds");
+//    ++m_instance_count;
 }
 
 Checkpoint::Checkpoint(const Checkpoint &rhs)
@@ -57,21 +61,12 @@ Checkpoint & Checkpoint::operator=(const Checkpoint &rhs) {
 }
 
 Checkpoint::~Checkpoint() {
-    delete m_source;
-    
-    if(!--m_instance_count) {
-        delete m_model;
-        m_model = 0lu;
-    }
-}
-
-void Checkpoint::render() {
-    const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
-    
-    m_model->set_translate(m_position);
-    m_model->set_scale(m_scale);
-    m_model->set_rotate(rotation.second, rotation.first);
-    m_model->render();
+//    delete m_source;
+//    
+//    if(!--m_instance_count) {
+//        delete m_model;
+//        m_model = 0lu;
+//    }
 }
 
 void Checkpoint::step(const float &time_step) {
@@ -124,6 +119,3 @@ bool Checkpoint::get_is_victory_checkpoint() {
 void Checkpoint::create_body() {
     m_body = Sphere(m_position, 75.0f);
 }
-
-Model * Checkpoint::m_model = 0;
-unsigned long Checkpoint::m_instance_count = 0lu;

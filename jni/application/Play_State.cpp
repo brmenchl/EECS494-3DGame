@@ -20,6 +20,8 @@
 #include "Platform_Building.h"
 #include "Grass.h"
 #include "Road_Straight.h"
+#include "Challenge_Checkpoint.h"
+#include "Reg_Checkpoint.h"
 
 using namespace std;
 using namespace Zeni;
@@ -64,11 +66,11 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         time_remaining = 30.0f;
         
         /*Checkpoints*/
-        Checkpoint* check1 = new Checkpoint(3.0f, Point3f(3500.0f, 3500.0f, 1700.0f));
-        Checkpoint* check2 = new Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
-        Checkpoint* check3 = new Checkpoint(3.0f, Point3f(7300.0f, 5300.0f, 500.0f));
-        Checkpoint* check4 = new Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
-        Checkpoint* check5 = new Checkpoint(3.0f, Point3f(5700, 7400, 150));
+        Challenge_Checkpoint* check1 = new Challenge_Checkpoint(3.0f, Point3f(3500.0f, 3500.0f, 1700.0f));
+        Reg_Checkpoint* check2 = new Reg_Checkpoint(3.0f, Point3f(1200.0f, 1400.0f, 100.0f));
+        Challenge_Checkpoint* check3 = new Challenge_Checkpoint(3.0f, Point3f(7300.0f, 5300.0f, 500.0f));
+        Reg_Checkpoint* check4 = new Reg_Checkpoint(0.0f, Point3f(8000.0f, 8000.0f, 5500.0f));
+        Reg_Checkpoint* check5 = new Reg_Checkpoint(3.0f, Point3f(5700, 7400, 150));
         
         check1->add_next_checkpoint(check2);
         check1->set_is_active(true);

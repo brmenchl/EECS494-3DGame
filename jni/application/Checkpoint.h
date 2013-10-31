@@ -25,7 +25,7 @@ public:
     Checkpoint & operator=(const Checkpoint &rhs);
     ~Checkpoint();
     
-    void render();
+    virtual void render() = 0;
     void step(const float &time_step);
     void set_velocity(const Zeni::Vector3f &velocity_) {m_velocity = velocity_;}
     Point3f get_position() {return m_position;}
@@ -42,14 +42,16 @@ public:
     bool get_is_victory_checkpoint();
     
     float m_keyframe;
-private:
     
+protected:
+    
+    virtual void load_model();
     std::list<Checkpoint*> next_checkpoints;
     float m_time_value;
     bool m_is_active;
     bool m_is_victory_checkpoint;
-    static Zeni::Model * m_model;
-    static unsigned long m_instance_count;
+//    static Zeni::Model * m_model;
+//    static unsigned long m_instance_count;
     Collision::Sphere m_body;
     
     Zeni::Sound_Source * m_source;
