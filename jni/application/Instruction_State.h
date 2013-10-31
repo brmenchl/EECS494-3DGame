@@ -23,9 +23,19 @@ public:
     Instructions_State()
     : Widget_Gamestate(make_pair(Point2f(0.0f, 0.0f), Point2f(800.0f, 600.0f)))
     {
+        Vertex2f_Texture ul(Point2f(0,0), Point2f(0.0f, 0.0f));
+        Vertex2f_Texture ll(Point2f(0,600), Point2f(0.0f, 1.0f));
+        Vertex2f_Texture lr(Point2f(800,600), Point2f(1.0f, 1.0f));
+        Vertex2f_Texture ur(Point2f(800,0), Point2f(1.0f, 0.0f));
+        Material material("instructions");
+        
+        Quadrilateral<Vertex2f_Texture> quad(ul, ll, lr, ur);
+        quad.lend_Material(&material);
+        
     }
     
 private:
+    Quadrilateral<Vertex2f_Texture> quad;
     void on_key(const SDL_KeyboardEvent &event) {
         if(event.keysym.sym == SDLK_ESCAPE && event.state == SDL_PRESSED)
             get_Game().pop_state();
@@ -33,21 +43,8 @@ private:
     
     void render() {
         Widget_Gamestate::render();
-        
-        Zeni::Font &fr = get_Fonts()["title"];
-        
-        fr.render_text(
-#if defined(_WINDOWS)
-                       "ALT+F4"
-#elif defined(_MACOSX)
-                       "Apple+Q"
-#else
-                       "Ctrl+Q"
-#endif
-                       " to Quit",
-                       Point2f(400.0f, 300.0f - 0.5f * fr.get_text_height()),
-                       get_Colors()["title_text"],
-                       ZENI_CENTER);
+        get_Video().render(quad);
+        Zeni::render_image (String("instructions"), Point2f(0,0), Point2f(800,600), false, Color());
     }
 };
 
