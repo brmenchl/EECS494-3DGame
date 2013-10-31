@@ -55,7 +55,7 @@ Crate::Crate(const Crate &rhs)
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
 
-    m_model->render();
+    //m_model->render();
   }
 
 void Crate::step(const float &time_step) {

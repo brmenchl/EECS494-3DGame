@@ -16,6 +16,7 @@
 #include "Residence.h"
 #include "Building_1.h"
 #include "Building_2.h"
+#include "Building_2_piece.h"
 #include "Building_Column.h"
 #include "Building_Platform.h"
 #include "Platform_Building.h"
@@ -25,6 +26,7 @@
 #include "Road_Intersection.h"
 #include "Challenge_Checkpoint.h"
 #include "Reg_Checkpoint.h"
+#include "Bridge.h"
 
 using namespace std;
 using namespace Zeni;
@@ -35,12 +37,12 @@ float Play_State::roll_sensitivity = 11000.0f;
 float Play_State::thrust_sensitivity = 30.0f;
 float Play_State::yaw_modifier = 5.0f;
 float Play_State::base_thrust = 1000.0f;
-float Play_State::thrust_delta = 25.0f;
+float Play_State::thrust_delta = 10.0f;
 float Play_State::thrust_range = 250.0f;
 
 Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
-                            m_camera(Camera(Point3f(600.0f, 7800.0f, 50.0f),
+                            m_camera(Camera(Point3f(1200.0f, 7800.0f, 50.0f),
                                             Quaternion(),
                                             1.0f, 90000.0f),
                                      Vector3f(0.0f, 0.0f, -39.0f),
@@ -64,16 +66,19 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         time_value_of_last_checkpoint(0)
     {
         processing_time = 0.0f;
-        time_remaining = 30.0f;
+        time_remaining = 60.0f;
         
         /*Checkpoints*/
         Reg_Checkpoint* check1 = new Reg_Checkpoint(3.0f, Point3f(5000.0f, 9000.0f, 700.0f));
         Reg_Checkpoint* check2 = new Reg_Checkpoint(3.0f, Point3f(8800.0f, 9400.0f, 2900.0f));
+        Reg_Checkpoint* check3 = new Reg_Checkpoint(5.0f, Point3f(11928.0f, 10765.0f, 3000.0f));
         Challenge_Checkpoint* check3_c = new Challenge_Checkpoint(10.0f, Point3f(10700.0f, 7660.0f, 4000.0f));
-        Reg_Checkpoint* check3_r = new Reg_Checkpoint(5.0f, Point3f(11928.0f, 10765.0f, 3000.0f));
         Reg_Checkpoint* check4 = new Reg_Checkpoint(2.0f, Point3f(14400, 16000, 615));
+        Challenge_Checkpoint* check4_c = new Challenge_Checkpoint(10.0f, Point3f(10701, 4880.62, 1060.12));
         Reg_Checkpoint* check5 = new Reg_Checkpoint(4.0f, Point3f(14600, 19800, 400));
+        Challenge_Checkpoint* check5_c = new Challenge_Checkpoint(10.0f, Point3f(13710.3, 16028.6, 170.135));
         Reg_Checkpoint* check6 = new Reg_Checkpoint(5.0f, Point3f(7850, 20560, 350));
+        Challenge_Checkpoint* check6_c = new Challenge_Checkpoint(10.0f, Point3f(8198.48, 19540.9, 338.112));
         Reg_Checkpoint* check7 = new Reg_Checkpoint(3.0f, Point3f(5400, 11700, 730));
         Challenge_Checkpoint* check7_c = new Challenge_Checkpoint(10.0f, Point3f(4500, 11710, 310));
         Reg_Checkpoint* check8 = new Reg_Checkpoint(3.0f, Point3f(7080, 7500, 2550));
@@ -81,46 +86,86 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         //Reg_Checkpoint* check10 = new Reg_Checkpoint(1.0f, Point3f(12260, 11075, 2880));
         Reg_Checkpoint* check11 = new Reg_Checkpoint(2.0f, Point3f(10800, 5683, 7766));
         Reg_Checkpoint* check12 = new Reg_Checkpoint(2.0f, Point3f(15360, 7284, 7011));
+        Challenge_Checkpoint* check12_c = new Challenge_Checkpoint(12.0f, Point3f(16114.1, 7418.5, 5442.87));
         Reg_Checkpoint* check13 = new Reg_Checkpoint(2.0f, Point3f(18100, 7537, 6760));
+        Challenge_Checkpoint* check13_c = new Challenge_Checkpoint(13.0f, Point3f(18874.9, 6711.48, 3431.7));
         Reg_Checkpoint* check14 = new Reg_Checkpoint(2.0f, Point3f(19343, 5789.07, 6708.82));
+        Challenge_Checkpoint* check14_c = new Challenge_Checkpoint(14.0f, Point3f(21696.6, 5207.04, 484.542));
         Reg_Checkpoint* check15 = new Reg_Checkpoint(2.0f, Point3f(21131.2, 4837.54, 6672.9));
         Reg_Checkpoint* check16 = new Reg_Checkpoint(2.0f, Point3f(23245.3, 6989.2, 6714.61));
-        Reg_Checkpoint* check17 = new Reg_Checkpoint(2.0f, Point3f(23782.3, 10248.1, 3756.54));
+        Reg_Checkpoint* check17 = new Reg_Checkpoint(2.0f, Point3f(21782.3, 10248.1, 3756.54));
         Reg_Checkpoint* check18 = new Reg_Checkpoint(2.0f, Point3f(19809.9, 12174.1, 757.032));
+        Reg_Checkpoint* check19 = new Reg_Checkpoint(4.0f, Point3f(8478.66, 12209, 550.4));
+        Challenge_Checkpoint* check19_c = new Challenge_Checkpoint(8.0f, Point3f(8750.49, 12202.2, 154.98));
 
 
 
 
         
         check1->add_next_checkpoint(check2);
-        check2->add_next_checkpoint(check3_r);
+        
+        check2->add_next_checkpoint(check3);
         check2->add_next_checkpoint(check3_c);
-        check3_c->add_next_checkpoint(check4);
-        check3_r->add_next_checkpoint(check4);
+        
+        check3_c->add_next_checkpoint(check4_c);
+        check3->add_next_checkpoint(check4);
+        check3->add_next_checkpoint(check4_c);
+        
         check4->add_next_checkpoint(check5);
+        check4->add_next_checkpoint(check5_c);
+        check4_c->add_next_checkpoint(check4);
+        check4_c->add_next_checkpoint(check5_c);
+        
         check5->add_next_checkpoint(check6);
+        check5->add_next_checkpoint(check6_c);
+        check5_c->add_next_checkpoint(check5);
+        
         check6->add_next_checkpoint(check7);
         check6->add_next_checkpoint(check7_c);
+        check6_c->add_next_checkpoint(check7_c);
+        check6_c->add_next_checkpoint(check7);
+        
         check7->add_next_checkpoint(check8);
         check7_c->add_next_checkpoint(check8);
+        
         check8->add_next_checkpoint(check9);
+        
         check9->add_next_checkpoint(check11);
         //check10->add_next_checkpoint(check11);
         check11->add_next_checkpoint(check12);
+        check11->add_next_checkpoint(check12_c);
+        
         check12->add_next_checkpoint(check13);
+        check12->add_next_checkpoint(check13_c);
+        check12_c->add_next_checkpoint(check13);
+        check12_c->add_next_checkpoint(check13_c);
+        
         check13->add_next_checkpoint(check14);
+        check13->add_next_checkpoint(check14_c);
+        check13_c->add_next_checkpoint(check14);
+        check13_c->add_next_checkpoint(check14_c);
+        
         check14->add_next_checkpoint(check15);
+        check14_c->add_next_checkpoint(check18);
+        
         check15->add_next_checkpoint(check16);
         check16->add_next_checkpoint(check17);
         check17->add_next_checkpoint(check18);
+        check18->add_next_checkpoint(check19);
+        check18->add_next_checkpoint(check19_c);
+        check19_c->set_as_victory_checkpoint();
+        check19->set_as_victory_checkpoint();
 
         checkpoints.push_back(check1);
         checkpoints.push_back(check2);
-        checkpoints.push_back(check3_r);
+        checkpoints.push_back(check3);
         checkpoints.push_back(check3_c);
         checkpoints.push_back(check4);
+        checkpoints.push_back(check4_c);
         checkpoints.push_back(check5);
+        checkpoints.push_back(check5_c);
         checkpoints.push_back(check6);
+        checkpoints.push_back(check6_c);
         checkpoints.push_back(check7);
         checkpoints.push_back(check7_c);
         checkpoints.push_back(check8);
@@ -128,12 +173,18 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         //checkpoints.push_back(check10);
         checkpoints.push_back(check11);
         checkpoints.push_back(check12);
+        checkpoints.push_back(check12_c);
         checkpoints.push_back(check13);
+        checkpoints.push_back(check13_c);
         checkpoints.push_back(check14);
+        checkpoints.push_back(check14_c);
         checkpoints.push_back(check15);
         checkpoints.push_back(check16);
         checkpoints.push_back(check17);
         checkpoints.push_back(check18);
+        checkpoints.push_back(check19);
+        checkpoints.push_back(check19_c);
+
 
         //Set the initial checkpoint
         check1->set_is_active(true);
@@ -175,6 +226,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         /* Done with ground */
         
         /*Buildings*/
+        objects.push_back(new Crate(Point3f(0,0,0), Vector3f(30 * 800, 30 * 800, 1)));
         objects.push_back(new Residence(Point3f(4500, 9000, 0)));
         objects.push_back(new Residence(Point3f(3000, 9000, 0)));
         objects.push_back(new Residence(Point3f(1500, 9000, 0)));
@@ -194,7 +246,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         objects.push_back(new Residence(Point3f(16000, 21000, 0)));
         objects.push_back(new Residence(Point3f(16000, 9000, 0)));
         objects.push_back(new Residence(Point3f(19000, 9000, 0)));
-        objects.push_back(new Residence(Point3f(14000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(14000, 12000, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
         objects.push_back(new Residence(Point3f(20000, 11400, 0)));
         objects.push_back(new Residence(Point3f(18000, 11400, 0)));
         objects.push_back(new Residence(Point3f(13000, 15000, 0)));
@@ -203,7 +255,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         objects.push_back(new Residence(Point3f(17439.7, 14071, 0)));
         objects.push_back(new Residence(Point3f(23307.9, 13842.3, 0)));
         objects.push_back(new Residence(Point3f(7235.03, 13000, 0)));
-
+        objects.push_back(new Building_2_piece("models/building2l1.3DS", Point3f(8000.71, 10600.1, 0)));
 
         
         Platform_Building* platform_1 = new Platform_Building(Point3f(8000, 4900, 0));
@@ -222,6 +274,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         Building_2* building2_1 = new Building_2(Point3f(1000, 4000, 0));
         Building_2* building2_2 = new Building_2(Point3f(8500, 9000, 0));
+    
+        Bridge* bridge1 = new Bridge(Point3f(8500, 11480, 0));
 
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
@@ -238,6 +292,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         building2_1->add_bodies_to_list(objects);
         building2_2->add_bodies_to_list(objects);
+        
+        bridge1->add_bodies_to_list(objects);
 
         set_pausable(true);
         
@@ -303,7 +359,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         std::list<Checkpoint*>::iterator check_it;
         for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
-            if ((*check_it)->get_is_active()) {
+            if ((*check_it)->get_is_active() || m_game_state == CUT_SCENE) {
                 (*check_it)->render();
             }
         }
@@ -326,18 +382,25 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
     }
 
     void Play_State::render_hud() {
-        ostringstream stream;
-        stream.precision(2);
-        stream << "time left: ";
-        stream << time_remaining;
-        Zeni::String hud(stream.str());
-        get_Fonts()["hud"].render_text(hud, Point2f(), Color());
+        
+        
         
         if (time_of_last_checkpoint - time_remaining < 0 && m_game_state == PLAY) {
             get_Fonts()["hud"].render_text("Checkpoint! +" + itoa(time_value_of_last_checkpoint) + " seconds!", Point2f(0, get_Window().get_height() - 200), Color());
         }
         
         switch (m_game_state) {
+                
+            case PLAY: {
+                ostringstream stream;
+                stream.precision(2);
+                stream << "time left: ";
+                stream << time_remaining;
+                Zeni::String hud(stream.str());
+                get_Fonts()["hud"].render_text(hud, Point2f(), Color());
+                break;
+            }
+                
             case WIN: {
                 Font &score = get_Fonts()["score"];
                 get_Fonts()["score"].render_text("Best Times:", Point2f(get_Window().get_width() - 200, 10), Color());
@@ -368,6 +431,26 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 break;
             }
                 
+            case CUT_SCENE: {
+                Zeni::String text, skip_text;
+                skip_text = "Press B to skip";
+                if (time_remaining > 53) {
+                    text = "Hello Ace! Today you'll be flying\n the course around Wind City.";
+                } else if (time_remaining > 45) {
+                    text = "You'll need to fly through a series of checkpoints,\n each one adding a few seconds to your remaining time.";
+                } else if (time_remaining > 38) {
+                    text = "Each time you pass through a checkpoint, the next will appear.\n Use LB to look in its direction if you don't see it.";
+                } else if (time_remaining > 33) {
+                    text =  "Red checkpoints are challenge checkpoints and award\n more time, but are harder to find and much harder to reach.";
+                } else if (time_remaining > 30) {
+                    text = "If you run out of time, you fail the assessment!\n Good luck, and watch out for Skyrates!";
+                }
+                get_Fonts()["cutscene"].render_text(text, Point2f(30, get_Window().get_height() / 2 + 100), Color());
+                get_Fonts()["cutscene"].render_text(skip_text, Point2f(get_Window().get_width() - 200, 10), Color());
+
+                break;
+            }
+                
             default:
                 break;
         }
@@ -379,7 +462,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         processing_time = float(current_time.get_seconds_since(time_passed));
         time_passed = current_time;
         
-        
         if (m_game_state == CUT_SCENE && time_remaining < 28.0) {
             m_camera.chase(&m_player);
             m_game_state = PLAY;
@@ -387,6 +469,31 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         switch (m_game_state) {
             case CUT_SCENE: {
+                if (time_remaining > 53) {
+                    //Hello Ace! Today you'll be flying the course around city.
+                    m_camera = My_Camera(Camera(Point3f(1000, 500, 5000), Quaternion(), 1.0f, 90000.0f), Vector3f(0.0f, 0.0f, -39.0f), 11.0f);
+                    m_camera.track(&m_player);
+                } else if (time_remaining > 45) {
+                    //You'll fly through a series of checkpoints, each one adding a few seconds to your remaining time.
+                    m_camera = My_Camera(Camera(Point3f(4500.0f, 15000.0f, 900.0f), Quaternion(), 1.0f, 90000.0f), Vector3f(0.0f, 0.0f, -39.0f), 11.0f);
+                    m_camera.track(&m_player);
+                } else if (time_remaining > 38) {
+                    //Each time you pass through a checkpoint, the next will appear. Use LB to look in its direction if you don't see it.
+                    m_camera = My_Camera(Camera(Point3f(8600, 11980, 400), Quaternion(), 1.0f, 90000.0f), Vector3f(0.0f, 0.0f, -39.0f), 11.0f);
+                    m_camera.track(&m_player);
+                } else if (time_remaining > 33) {
+                    // Red checkpoints are challenge checkpoints and award more time, but are harder to find and much harder to reach.
+                    m_camera.get_camera() = Camera(Point3f(13710.3, 16238.6, 170.135), Quaternion(), 1.0f, 90000.0f);
+                    m_camera.track(&m_player);
+                } else if (time_remaining > 30) {
+                    //If you run out of time, you fail the assessment! Good luck!
+                    m_camera = My_Camera(Camera(Point3f(1200.0f, 7800.0f, 50.0f), Quaternion(), 1.0f, 90000.0f), Vector3f(0.0f, 0.0f, -39.0f), 11.0f);
+                    m_player = Player(Point3f(0.0f, 8000.0f, 150.0f),
+                                      Vector3f(1.0f, 1.0f, 1.0f));
+                    m_camera.track(&m_player);
+                }
+                
+                
                 update_time(processing_time);
                 physics_loop(processing_time);
                 break;
@@ -664,6 +771,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                     get_Game().pop_state();
                     Play_State* newplay = new Play_State();
                     get_Game().push_state(newplay);
+                } else if (m_game_state == CUT_SCENE) {
+                    time_remaining = 30.1;
                 }
                 break;
             }
