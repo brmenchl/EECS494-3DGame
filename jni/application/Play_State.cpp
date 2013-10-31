@@ -36,7 +36,7 @@ float Play_State::thrust_sensitivity = 30.0f;
 float Play_State::yaw_modifier = 5.0f;
 float Play_State::base_thrust = 1000.0f;
 float Play_State::thrust_delta = 25.0f;
-float Play_State::thrust_range = 250.0f;
+float Play_State::thrust_range = 400.0f;
 
 Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
@@ -50,6 +50,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                             m_game_state(CUT_SCENE),
         objects(),
         checkpoints(),
+        animated_objects(),
         high_scores(),
         debris(),
         next_checkpoints(),
@@ -204,7 +205,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Building_2* building2_1 = new Building_2(Point3f(1000, 4000, 0));
         Building_2* building2_2 = new Building_2(Point3f(8500, 9000, 0));
 
-    
+        Turbine* turbine = new Turbine(Point3f(300,4300,0));
+        animated_objects.push_back(turbine);
+        
         //objects.push_back(c);
         objects.push_back(r1);
         objects.push_back(r2);
@@ -240,6 +243,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         building2_1->add_bodies_to_list(objects);
         building2_2->add_bodies_to_list(objects);
 
+        turbine->add_bodies_to_list(objects);
         set_pausable(true);
         
         set_actions();
@@ -469,11 +473,15 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 (*it)->step(time_step);
             }
             
+            std::list<Game_Object*>::iterator anIt;
+            for(anIt=animated_objects.begin(); anIt != animated_objects.end(); anIt++){
+                (*anIt)->step(time_step);
+            }
+            
             std::list<Checkpoint*>::iterator check_it;
             for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
                 (*check_it)->step(time_step);
             }
-            
             m_player.step(time_step);
             m_camera.step(time_step, velocity.get_k());
             processing_time -= time_step;
