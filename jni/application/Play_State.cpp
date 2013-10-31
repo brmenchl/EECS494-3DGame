@@ -52,6 +52,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                             m_game_state(CUT_SCENE),
         objects(),
         checkpoints(),
+        animated_objects(),
         high_scores(),
         debris(),
         next_checkpoints(),
@@ -277,6 +278,9 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
     
         Bridge* bridge1 = new Bridge(Point3f(8500, 11480, 0));
 
+        Turbine* turbine = new Turbine(Point3f(300,4300,0));
+        animated_objects.push_back(turbine);
+
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
         platform_3->add_bodies_to_list(objects);
@@ -295,6 +299,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         bridge1->add_bodies_to_list(objects);
 
+        turbine->add_bodies_to_list(objects);
         set_pausable(true);
         
         set_actions();
@@ -575,11 +580,15 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 (*it)->step(time_step);
             }
             
+            std::list<Game_Object*>::iterator anIt;
+            for(anIt=animated_objects.begin(); anIt != animated_objects.end(); anIt++){
+                (*anIt)->step(time_step);
+            }
+            
             std::list<Checkpoint*>::iterator check_it;
             for(check_it = checkpoints.begin(); check_it != checkpoints.end(); check_it++){
                 (*check_it)->step(time_step);
             }
-            
             m_player.step(time_step);
             m_camera.step(time_step, velocity.get_k());
             processing_time -= time_step;

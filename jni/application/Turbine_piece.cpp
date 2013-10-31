@@ -1,13 +1,13 @@
-
 //
-//  Bridge_piece.cpp
+//  Turbine_piece.cpp
 //  game
 //
-//  Created by Bradley Menchl on 10/30/13.
+//  Created by Bradley Menchl on 10/31/13.
 //
 //
 
-#include "Bridge_piece.h"
+
+#include "Turbine_piece.h"
 #include <zenilib.h>
 #include "Game_Object.h"
 
@@ -15,20 +15,23 @@ using namespace Zeni;
 using namespace Zeni::Collision;
 using namespace std;
 
-Bridge_piece::Bridge_piece(const String &texture, const Point3f &corner_,
-                                   const Vector3f &scale_,
-                                   const Quaternion &rotation_)
+Turbine_piece::Turbine_piece(const String &texture, const Point3f &corner_,
+                           const Vector3f &scale_,
+                           const Quaternion &rotation_)
 : Game_Object(corner_, scale_, rotation_),
+wing(false),
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
     //if(!m_instance_count)
     m_model = new Model(texture);
+    if(texture.c_str()[14] == 'w'){
+        wing = true;
+    }
     ++m_instance_count;
-    leg = texture.c_str()[13] == 'l';
     create_body();
 }
 
-Bridge_piece::Bridge_piece(const Bridge_piece &rhs)
+Turbine_piece::Turbine_piece(const Turbine_piece &rhs)
 : Game_Object(rhs),
 m_source(new Sound_Source(get_Sounds()["collide"]))
 {
@@ -37,7 +40,7 @@ m_source(new Sound_Source(get_Sounds()["collide"]))
     create_body();
 }
 
-Bridge_piece & Bridge_piece::operator=(const Bridge_piece &rhs) {
+Turbine_piece & Turbine_piece::operator=(const Turbine_piece &rhs) {
     m_position = rhs.m_position;
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
@@ -47,7 +50,7 @@ Bridge_piece & Bridge_piece::operator=(const Bridge_piece &rhs) {
     return *this;
 }
 
-Bridge_piece::~Bridge_piece() {
+Turbine_piece::~Turbine_piece() {
     delete m_source;
     
     if(!--m_instance_count) {
@@ -56,7 +59,7 @@ Bridge_piece::~Bridge_piece() {
     }
 }
 
-void Bridge_piece::render() {
+void Turbine_piece::render() {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
     
     m_model->set_translate(m_position);
@@ -66,39 +69,37 @@ void Bridge_piece::render() {
     m_model->render();
 }
 
-void Bridge_piece::step(const float &time_step) {
-    m_position += time_step * m_velocity;
+void Turbine_piece::step(const float &time_step) {
+    m_rotation *= Quaternion(0,time_step*4,0);
     create_body();
 }
 
-void Bridge_piece::create_body() {
+void Turbine_piece::create_body() {
     Vector3f new_scale;
-    if(leg){
-        new_scale = Vector3f(350.0f,100.0f,280.0f);
+    if(wing){
+        new_scale = Vector3f(180,180,3000);
         m_my_body = Collision::Parallelepiped(m_position,
                                               m_rotation * new_scale.get_i(),
                                               m_rotation * new_scale.get_j(),
                                               m_rotation * new_scale.get_k());
     }
     else{
-        new_scale = Vector3f(370,1980,80);
-        m_my_body = Collision::Parallelepiped(m_position+Vector3f(0,0,80),
+        new_scale = Vector3f(180,180,5100);
+        m_my_body = Collision::Parallelepiped(m_position,
                                               m_rotation * new_scale.get_i(),
                                               m_rotation * new_scale.get_j(),
                                               m_rotation * new_scale.get_k());
     }
-    
-
 }
 
-Collision::Parallelepiped & Bridge_piece::get_body() {
+Collision::Parallelepiped & Turbine_piece::get_body() {
     return m_my_body;
 }
 
-void Bridge_piece::collide() {
+void Turbine_piece::collide() {
     if(!m_source->is_playing())
         m_source->play();
 }
 
-//Model * Bridge_piece::m_model = 0;
-unsigned long Bridge_piece::m_instance_count = 0lu;
+//Model * Turbine_piece::m_model = 0;
+unsigned long Turbine_piece::m_instance_count = 0lu;

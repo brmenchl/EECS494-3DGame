@@ -17,6 +17,7 @@
 #include "My_Camera.h"
 #include "Checkpoint.h"
 #include "Skybox.h"
+#include "Turbine.h"
 #include "Arrow.h"
 
 using namespace std;
@@ -74,6 +75,7 @@ private:
     list<Game_Object*> debris;
     list<Game_Object*> ground_tiles;
     list<Checkpoint*> next_checkpoints;
+    list<Game_Object*> animated_objects;
     int m_game_state;
     float x, y, w, h, roll;
     Zeni::Point2f vibration;

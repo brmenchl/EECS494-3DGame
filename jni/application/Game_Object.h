@@ -25,7 +25,7 @@ public:
     
     virtual void render() = 0;
     virtual void collide() = 0;
-    void step(const float &time_step);
+    virtual void step(const float &time_step);
     void set_velocity(const Vector3f &velocity_) {m_velocity = velocity_;}
     Vector3f get_velocity() { return m_velocity; }
     Point3f get_position() {return m_position;}
