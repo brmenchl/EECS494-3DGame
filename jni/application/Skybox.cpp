@@ -38,6 +38,13 @@ void Skybox::boxRender(Point3f player_pos) {
     }
 }
 
+void Skybox::create_body() {
+    m_body = Collision::Parallelepiped(m_position,
+                            m_rotation * m_scale.get_i(),
+                            m_rotation * m_scale.get_j(),
+                            m_rotation * m_scale.get_k());
+}
+
 Skybox::~Skybox() {
     for(Model *m : skybox){
         delete m;

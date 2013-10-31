@@ -37,6 +37,8 @@ public:
     Vector3f get_up_vec();
     Vector3f get_left_vec();
     void adjust_vectors();
+    
+    virtual void create_body() = 0;
 protected:
     //Member variables
     Vector3f m_velocity;

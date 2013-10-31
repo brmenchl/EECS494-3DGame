@@ -45,6 +45,10 @@ void Arrow::arrowRender(My_Camera &m_cam, Checkpoint* checkpoint) {
 
 }
 
+void Arrow::create_body() {
+    
+}
+
 Arrow::~Arrow() {
     std::cout << "deleting" << std::endl;
     delete m_model;

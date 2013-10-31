@@ -31,6 +31,7 @@ public:
     Point3f get_position() {return m_position;}
     
     void collide();
+    void create_body();
     
 private:
     
@@ -39,7 +40,6 @@ private:
     Collision::Parallelepiped m_my_body;
     Zeni::Sound_Source * m_source;
     
-    void create_body();
 };
 
 #endif /* defined(__game__Building_1__) */

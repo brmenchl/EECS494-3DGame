@@ -23,6 +23,7 @@ public:
     void render(){};
     void boxRender(Point3f player_pos);
     void collide(){};
+    void create_body();
 private:
     static unsigned long m_instance_count;
     static Zeni::Model * m_modelS1;

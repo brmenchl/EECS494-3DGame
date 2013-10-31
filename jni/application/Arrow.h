@@ -25,6 +25,7 @@ public:
     void render(){};
     void arrowRender(My_Camera &m_cam, Checkpoint* checkpoint);
     void collide(){};
+    void create_body();
 private:
     static unsigned long m_instance_count;
     static Zeni::Model * m_model;
