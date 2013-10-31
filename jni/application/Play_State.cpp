@@ -67,15 +67,15 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         time_remaining = 30.0f;
         
         /*Checkpoints*/
-        Reg_Checkpoint* check1 = new Reg_Checkpoint(2.0f, Point3f(5000.0f, 9000.0f, 700.0f));
-        Reg_Checkpoint* check2 = new Reg_Checkpoint(2.0f, Point3f(8800.0f, 9400.0f, 2900.0f));
-        Challenge_Checkpoint* check3_c = new Challenge_Checkpoint(5.0f, Point3f(10700.0f, 7660.0f, 4000.0f));
-        Reg_Checkpoint* check3_r = new Reg_Checkpoint(3.0f, Point3f(11928.0f, 10765.0f, 3000.0f));
-        Reg_Checkpoint* check4 = new Reg_Checkpoint(3.0f, Point3f(14400, 16000, 615));
-        Reg_Checkpoint* check5 = new Reg_Checkpoint(1.0f, Point3f(14600, 19800, 400));
-        Reg_Checkpoint* check6 = new Reg_Checkpoint(1.0f, Point3f(7850, 20560, 350));
-        Reg_Checkpoint* check7 = new Reg_Checkpoint(2.0f, Point3f(5400, 11700, 730));
-        Challenge_Checkpoint* check7_c = new Challenge_Checkpoint(4.0f, Point3f(4500, 11710, 310));
+        Reg_Checkpoint* check1 = new Reg_Checkpoint(3.0f, Point3f(5000.0f, 9000.0f, 700.0f));
+        Reg_Checkpoint* check2 = new Reg_Checkpoint(3.0f, Point3f(8800.0f, 9400.0f, 2900.0f));
+        Challenge_Checkpoint* check3_c = new Challenge_Checkpoint(10.0f, Point3f(10700.0f, 7660.0f, 4000.0f));
+        Reg_Checkpoint* check3_r = new Reg_Checkpoint(5.0f, Point3f(11928.0f, 10765.0f, 3000.0f));
+        Reg_Checkpoint* check4 = new Reg_Checkpoint(2.0f, Point3f(14400, 16000, 615));
+        Reg_Checkpoint* check5 = new Reg_Checkpoint(4.0f, Point3f(14600, 19800, 400));
+        Reg_Checkpoint* check6 = new Reg_Checkpoint(5.0f, Point3f(7850, 20560, 350));
+        Reg_Checkpoint* check7 = new Reg_Checkpoint(3.0f, Point3f(5400, 11700, 730));
+        Challenge_Checkpoint* check7_c = new Challenge_Checkpoint(10.0f, Point3f(4500, 11710, 310));
         Reg_Checkpoint* check8 = new Reg_Checkpoint(3.0f, Point3f(7080, 7500, 2550));
         Reg_Checkpoint* check9 = new Reg_Checkpoint(3.0f, Point3f(8350, 5760, 7520));
         //Reg_Checkpoint* check10 = new Reg_Checkpoint(1.0f, Point3f(12260, 11075, 2880));
@@ -85,6 +85,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Reg_Checkpoint* check14 = new Reg_Checkpoint(2.0f, Point3f(19343, 5789.07, 6708.82));
         Reg_Checkpoint* check15 = new Reg_Checkpoint(2.0f, Point3f(21131.2, 4837.54, 6672.9));
         Reg_Checkpoint* check16 = new Reg_Checkpoint(2.0f, Point3f(23245.3, 6989.2, 6714.61));
+        Reg_Checkpoint* check17 = new Reg_Checkpoint(2.0f, Point3f(23782.3, 10248.1, 3756.54));
+        Reg_Checkpoint* check18 = new Reg_Checkpoint(2.0f, Point3f(19809.9, 12174.1, 757.032));
 
 
 
@@ -109,6 +111,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         check13->add_next_checkpoint(check14);
         check14->add_next_checkpoint(check15);
         check15->add_next_checkpoint(check16);
+        check16->add_next_checkpoint(check17);
+        check17->add_next_checkpoint(check18);
 
         checkpoints.push_back(check1);
         checkpoints.push_back(check2);
@@ -128,6 +132,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         checkpoints.push_back(check14);
         checkpoints.push_back(check15);
         checkpoints.push_back(check16);
+        checkpoints.push_back(check17);
+        checkpoints.push_back(check18);
 
         //Set the initial checkpoint
         check1->set_is_active(true);
@@ -169,24 +175,37 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         /* Done with ground */
         
         /*Buildings*/
-        Residence* r1 = new Residence(Point3f(4500, 9000, 0));
-        Residence* r2 = new Residence(Point3f(3000, 9000, 0));
-        Residence* r3 = new Residence(Point3f(1500, 9000, 0));
-        Residence* r4 = new Residence(Point3f(0, 9000, 0));
-        Residence* r5 = new Residence(Point3f(6000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
-        Residence* r6 = new Residence(Point3f(4500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
-        Residence* r7 = new Residence(Point3f(3000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
-        Residence* r8 = new Residence(Point3f(1500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi));
-        Residence* r9 = new Residence(Point3f(6000, 9600, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
-        Residence* r10 = new Residence(Point3f(12500, 21000, 0));
-        Residence* r11 = new Residence(Point3f(11000, 21000, 0));
-        Residence* r12 = new Residence(Point3f(9500, 21000, 0));
-        Residence* r13 = new Residence(Point3f(8000, 21000, 0));
-        Residence* r14 = new Residence(Point3f(20500, 21000, 0));
-        Residence* r15 = new Residence(Point3f(19000, 21000, 0));
-        Residence* r16 = new Residence(Point3f(17500, 21000, 0));
-        Residence* r17 = new Residence(Point3f(16000, 21000, 0));
+        objects.push_back(new Residence(Point3f(4500, 9000, 0)));
+        objects.push_back(new Residence(Point3f(3000, 9000, 0)));
+        objects.push_back(new Residence(Point3f(1500, 9000, 0)));
+        objects.push_back(new Residence(Point3f(0, 9000, 0)));
+        objects.push_back(new Residence(Point3f(6000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(4500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(3000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(1500, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(6000, 9600, 0), Vector3f(15.0f, 15.0f, 15.0f),  Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2)));
+        objects.push_back(new Residence(Point3f(12500, 21000, 0)));
+        objects.push_back(new Residence(Point3f(11000, 21000, 0)));
+        objects.push_back(new Residence(Point3f(9500, 21000, 0)));
+        objects.push_back(new Residence(Point3f(8000, 21000, 0)));
+        objects.push_back( new Residence(Point3f(20500, 21000, 0)));
+        objects.push_back(new Residence(Point3f(19000, 21000, 0)));
+        objects.push_back(new Residence(Point3f(17500, 21000, 0)));
+        objects.push_back(new Residence(Point3f(16000, 21000, 0)));
+        objects.push_back(new Residence(Point3f(16000, 9000, 0)));
+        objects.push_back(new Residence(Point3f(19000, 9000, 0)));
+        objects.push_back(new Residence(Point3f(14000, 11700, 0), Vector3f(15.0f, 15.0f, 15.0f), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi)));
+        objects.push_back(new Residence(Point3f(20000, 11400, 0)));
+        objects.push_back(new Residence(Point3f(18000, 11400, 0)));
+        objects.push_back(new Residence(Point3f(13000, 15000, 0)));
+        objects.push_back(new Residence(Point3f(11261.4, 15058.1, 0)));
+        objects.push_back(new Residence(Point3f(7631.52, 15176.8, 0)));
+        objects.push_back(new Residence(Point3f(17439.7, 14071, 0)));
+        objects.push_back(new Residence(Point3f(23307.9, 13842.3, 0)));
+        objects.push_back(new Residence(Point3f(7235.03, 13000, 0)));
 
+
+        
         Platform_Building* platform_1 = new Platform_Building(Point3f(8000, 4900, 0));
         Platform_Building* platform_2 = new Platform_Building(Point3f(7500, 17000, 0));
         Platform_Building* platform_3 = new Platform_Building(Point3f(11000, 17000, 0));
@@ -203,26 +222,6 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         Building_2* building2_1 = new Building_2(Point3f(1000, 4000, 0));
         Building_2* building2_2 = new Building_2(Point3f(8500, 9000, 0));
-
-    
-        //objects.push_back(c);
-        objects.push_back(r1);
-        objects.push_back(r2);
-        objects.push_back(r3);
-        objects.push_back(r4);
-        objects.push_back(r5);
-        objects.push_back(r6);
-        objects.push_back(r7);
-        objects.push_back(r8);
-        objects.push_back(r9);
-        objects.push_back(r10);
-        objects.push_back(r11);
-        objects.push_back(r12);
-        objects.push_back(r13);
-        objects.push_back(r14);
-        objects.push_back(r15);
-        objects.push_back(r16);
-        objects.push_back(r17);
 
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
@@ -459,7 +458,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
             }
             
             if (m_game_state == PLAY) {
-                rotate_player(time_step * 110);
+                rotate_player(time_step * 70);
             }
             
             /** Move each object which needs to **/
