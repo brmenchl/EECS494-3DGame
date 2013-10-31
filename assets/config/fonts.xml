@@ -57,6 +57,14 @@ Only TrueType fonts are supported.
           <height>600</height>
       </virtual_screen>
   </score>
+  <cutscene>
+      <filepath>fonts/ABBEROAD.TTF</filepath>
+      <height>34</height>
+      <virtual_screen>
+          <width>800</width>
+          <height>600</height>
+      </virtual_screen>
+  </cutscene>
   <hud>
       <filepath>fonts/jethoseFULL.TTF</filepath>
       <height>50</height>
