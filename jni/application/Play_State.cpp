@@ -36,9 +36,9 @@ float Play_State::look_sensitivity = 30000.0f;
 float Play_State::roll_sensitivity = 11000.0f;
 float Play_State::thrust_sensitivity = 30.0f;
 float Play_State::yaw_modifier = 5.0f;
-float Play_State::base_thrust = 1000.0f;
+float Play_State::base_thrust = 1250.0f;
 float Play_State::thrust_delta = 10.0f;
-float Play_State::thrust_range = 250.0f;
+float Play_State::thrust_range = 150.0f;
 
 Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                                     Vector3f(1.0f, 1.0f, 1.0f)),
@@ -220,17 +220,17 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 w = j % 5 == 0 && j > 0;
                 h = (i + 1) % 10 == 0 && i > 0;
                 if (w) {
-                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1));
+                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 3), Vector3f(10, 10, 1));
                     ground_tiles.push_back(c);
                 }
                 
                 if (h) {
-                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 1), Vector3f(10, 10, 1), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
+                    Road_Straight* c = new Road_Straight(Point3f(i * 800, j * 800, 3), Vector3f(10, 10, 1), Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), Global::pi / 2));
                     ground_tiles.push_back(c);
                 }
                 
                 if (h && w) {
-                    Road_Intersection* c = new Road_Intersection(Point3f((i - 1) * 800, j * 800, 2), Vector3f(10, 10, 1));
+                    Road_Intersection* c = new Road_Intersection(Point3f((i - 1) * 800, j * 800, 4), Vector3f(10, 10, 1));
                     ground_tiles.push_back(c);
                 }
             }
@@ -657,7 +657,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         //Get jet thrust
         if (m_game_state == PLAY) {
             /** Calculate current thrust**/
-            float desired_thrust = base_thrust + thrust_range * y;
+            float desired_thrust = max((base_thrust + thrust_range * y), 1100.0f);
             
             if (thrust_amount > desired_thrust) {
                 thrust_amount -= thrust_delta * time_step;
