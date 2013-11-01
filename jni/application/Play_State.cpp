@@ -94,10 +94,12 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Challenge_Checkpoint* check14_c = new Challenge_Checkpoint(14.0f, Point3f(21696.6, 5207.04, 484.542));
         Reg_Checkpoint* check15 = new Reg_Checkpoint(2.0f, Point3f(21131.2, 4837.54, 6672.9));
         Reg_Checkpoint* check16 = new Reg_Checkpoint(2.0f, Point3f(23245.3, 6989.2, 6714.61));
-        Reg_Checkpoint* check17 = new Reg_Checkpoint(2.0f, Point3f(21782.3, 10248.1, 3756.54));
-        Reg_Checkpoint* check18 = new Reg_Checkpoint(2.0f, Point3f(19809.9, 12174.1, 757.032));
-        Reg_Checkpoint* check19 = new Reg_Checkpoint(4.0f, Point3f(8478.66, 12209, 550.4));
-        Challenge_Checkpoint* check19_c = new Challenge_Checkpoint(8.0f, Point3f(8750.49, 12202.2, 154.98));
+        Reg_Checkpoint* check17 = new Reg_Checkpoint(3.0f, Point3f(24098.2, 11099.2, 1208.9));
+        Challenge_Checkpoint* check17_c = new Challenge_Checkpoint(14.0f, Point3f(23661.4, 11510.9, 5421.14));
+        Reg_Checkpoint* check18 = new Reg_Checkpoint(4.0f, Point3f(21532.8, 15227, 310.453));
+        Reg_Checkpoint* check19 = new Reg_Checkpoint(4.0f, Point3f(14425.4, 12395.5, 255.657));
+        Reg_Checkpoint* check20 = new Reg_Checkpoint(4.0f, Point3f(8478.66, 12209, 550.4));
+        Challenge_Checkpoint* check20_c = new Challenge_Checkpoint(8.0f, Point3f(8750.49, 12202.2, 154.98));
 
 
 
@@ -148,14 +150,23 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         
         check14->add_next_checkpoint(check15);
         check14_c->add_next_checkpoint(check18);
+        check14_c->add_next_checkpoint(check17_c);
         
         check15->add_next_checkpoint(check16);
+        
         check16->add_next_checkpoint(check17);
+        check16->add_next_checkpoint(check17_c);
+        
         check17->add_next_checkpoint(check18);
+        check17_c->add_next_checkpoint(check18);
+        
         check18->add_next_checkpoint(check19);
-        check18->add_next_checkpoint(check19_c);
-        check19_c->set_as_victory_checkpoint();
-        check19->set_as_victory_checkpoint();
+        
+        check19->add_next_checkpoint(check20);
+        check19->add_next_checkpoint(check20_c);
+        
+        check20_c->set_as_victory_checkpoint();
+        check20->set_as_victory_checkpoint();
 
         checkpoints.push_back(check1);
         checkpoints.push_back(check2);
@@ -182,9 +193,11 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         checkpoints.push_back(check15);
         checkpoints.push_back(check16);
         checkpoints.push_back(check17);
+        checkpoints.push_back(check17_c);
         checkpoints.push_back(check18);
         checkpoints.push_back(check19);
-        checkpoints.push_back(check19_c);
+        checkpoints.push_back(check20);
+        checkpoints.push_back(check20_c);
 
 
         //Set the initial checkpoint
@@ -273,16 +286,20 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Platform_Building* platform_11 = new Platform_Building(Point3f(24000, 4900, 0));
         Platform_Building* platform_12 = new Platform_Building(Point3f(27500, 4900, 0));
 
-        Building_2* building2_1 = new Building_2(Point3f(1000, 4000, 0));
+        Building_2* building2_1 = new Building_2(Point3f(10, 4000, 0));
         Building_2* building2_2 = new Building_2(Point3f(8500, 9000, 0));
+        Building_2* building2_3 = new Building_2(Point3f(15400.4, 13200.9, 0));
     
         Bridge* bridge1 = new Bridge(Point3f(8500, 11480, 0));
 
-        Turbine* turbine = new Turbine(Point3f(300,4300,0));
+        Turbine* turbine = new Turbine(Point3f(300,5300,0));
         Turbine* turbine2 = new Turbine(Point3f(22000,15000,0));
         Turbine* turbine3 = new Turbine(Point3f(20000,15000,0));
         Turbine* turbine4 = new Turbine(Point3f(1500,13000,0));
         Turbine* turbine5 = new Turbine(Point3f(4000,14000,0));
+        Turbine* turbine6 = new Turbine(Point3f(23225.4, 11376.5, 0));
+        Turbine* turbine7 = new Turbine(Point3f(25412, 11542.6, 0));
+
 
 
         animated_objects.push_back(turbine);
@@ -290,6 +307,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         animated_objects.push_back(turbine3);
         animated_objects.push_back(turbine4);
         animated_objects.push_back(turbine5);
+        animated_objects.push_back(turbine6);
+        animated_objects.push_back(turbine7);
 
         platform_1->add_bodies_to_list(objects);
         platform_2->add_bodies_to_list(objects);
@@ -306,6 +325,7 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
         building2_1->add_bodies_to_list(objects);
         building2_2->add_bodies_to_list(objects);
+        building2_3->add_bodies_to_list(objects);
         
         bridge1->add_bodies_to_list(objects);
 
@@ -314,6 +334,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         turbine3->add_bodies_to_list(objects);
         turbine4->add_bodies_to_list(objects);
         turbine5->add_bodies_to_list(objects);
+        turbine6->add_bodies_to_list(objects);
+        turbine7->add_bodies_to_list(objects);
 
         set_pausable(true);
         
@@ -359,6 +381,8 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         Video &vr = get_Video();
         vr.set_3d(m_camera.get_camera());
         
+//        
+//        vr.set_Fog(Fog(Color(.2,.2,.2,.2),1.0f, FOG_LINEAR, 17000.0f, 19000.0f));
         vr.set_zwrite(false);
         m_skybox.boxRender(m_camera.get_camera().position);
         vr.set_zwrite(true);
@@ -369,7 +393,12 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
         }
 
         for(it = objects.begin(); it != objects.end(); it++){
-            (*it)->render();
+            Vector3f distance = Vector3f(m_camera.get_camera().position.x - (*it)->get_position().x,
+                                         m_camera.get_camera().position.y - (*it)->get_position().y,
+                                         m_camera.get_camera().position.z - (*it)->get_position().z);
+            if (distance.magnitude() < 20000) {
+                (*it)->render();
+            }
         }
         
         
@@ -432,21 +461,21 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
                 
                 
                 Font &f = get_Fonts()["hud"];
-                get_Fonts()["hud"].render_text("you win!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("Course complete!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
                 get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case LOSE: {
                 Font &f = get_Fonts()["hud"];
-                get_Fonts()["hud"].render_text("you ran out of time!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("You ran out of time!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
                 get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
                 
             case CRASH: {
                 Font &f = get_Fonts()["hud"];
-                get_Fonts()["hud"].render_text("you crashed!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
+                get_Fonts()["hud"].render_text("You crashed!", Point2f(30, get_Window().get_height() -  f.get_text_height() * 2.2), Color());
                 get_Fonts()["hud"].render_text("Press B to play again", Point2f(30, get_Window().get_height() - f.get_text_height()), Color());
                 break;
             }
@@ -612,8 +641,14 @@ Play_State::Play_State() : m_player(Point3f(0.0f, 8000.0f, 150.0f),
 
     void Play_State::rotate_player(float time_step) {
         /** Rotate the aircraft **/
+        float pull_up_modifier;
+        if (m_player.get_up_vec().get_jk().k > 0 && m_player.get_forward_vec().get_jk().k < -0.6) {
+            pull_up_modifier = 1.4 + m_player.get_forward_vec().get_jk().k;
+        } else {
+            pull_up_modifier = 1.0;
+        }
         m_player.rotate(Quaternion((-w * time_step / (look_sensitivity * yaw_modifier)),
-                                   (h * time_step / look_sensitivity),
+                                   (h * time_step / (look_sensitivity) * pull_up_modifier),
                                    (roll * time_step / roll_sensitivity)));
         m_player.adjust_vectors();
     }
